@@ -7,15 +7,26 @@ from .client import get_client
 from .models import CoffeeRequest, Match
 
 
-def find_a_match(*, user_id):
+def find_a_match(*, user_id, coffee_request):
     client = get_client()
     members = client.get_channel_participants()
     members.remove(user_id)
 
-    member = random.choice(members)
-    while client.is_bot(user=member):
-        members.remove(member)
+    while len(members):
         member = random.choice(members)
+        is_bot = get_client().is_bot(user=member)
+        matches = Match.objects.filter(coffee_request=coffee_request, user_id=member)
+        if is_bot or matches:
+            members.remove(member)
+        else:
+            break
+
+    if not members:
+        client.post_to_private(
+            receiver_id=user_id,
+            blocks=[{"type": "section", "text": {"type": "mrkdwn", "text": "No coffee buddies found"}}]
+        )
+        return None
 
     return member
 
@@ -25,13 +36,14 @@ def create_request(*, user_id, response_url):
         user_id=user_id, response_url=response_url
     )
 
-    member = find_a_match(user_id=user_id)
-    return Match.objects.create(
-        user_id=member,
-        coffee_request=coffee_request,
-        expiration=timezone.now(),
-        block_id=uuid4(),
-    )
+    member = find_a_match(user_id=user_id, coffee_request=coffee_request)
+    if member:
+        return Match.objects.create(
+            user_id=member,
+            coffee_request=coffee_request,
+            expiration=timezone.now(),
+            block_id=uuid4(),
+        )
 
 
 def accept_request(*, user_id, block_id, response_url):
@@ -73,13 +85,14 @@ def on_match_failure(match):
     coffee_request = match.coffee_request
 
     requested_user = coffee_request.user_id
-    member = find_a_match(user_id=requested_user)
+    member = find_a_match(user_id=requested_user, coffee_request=coffee_request)
 
-    match = Match.objects.create(
-        user_id=member,
-        coffee_request=coffee_request,
-        expiration=timezone.now(),
-        block_id=uuid4(),
-    )
+    if member:
+        match = Match.objects.create(
+            user_id=member,
+            coffee_request=coffee_request,
+            expiration=timezone.now(),
+            block_id=uuid4(),
+        )
 
-    get_client().send_invite(match.user_id, match.block_id)
+        get_client().send_invite(match.user_id, match.block_id)

@@ -26,7 +26,7 @@ class Client:
         self._client.chat_postMessage(channel=self.channel, text=message)
 
     def post_to_private(self, receiver_id: str, blocks: List) -> None:
-        self._client.chat_postMessage(channel=receiver_id, blocks=blocks)
+        self._client.chat_postMessage(channel=receiver_id, blocks=blocks, as_user=True)
 
     def is_bot(self, user) -> bool:
         response = self._client.users_info(user=user)
