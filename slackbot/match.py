@@ -48,6 +48,10 @@ def accept_match(user, block_id, response_url):
     match.response_url = response_url
     match.save()
 
+    coffee_request = match.coffee_request
+    coffee_request.status = CoffeeRequest.STATUS_MATCHED
+    coffee_request.save()
+
     on_match_success(match)
 
 
