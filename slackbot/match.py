@@ -1,5 +1,6 @@
 import random
 
+from celery import app
 from django.utils import timezone
 
 from client import get_client
@@ -13,9 +14,7 @@ def find_a_match():
     return member
 
 
-def create_coffee_request(request):
-    user_id = request.POST.get("user_id")
-    response_url = request.POST.get("response_url")
+def create_coffee_request(*, user_id, response_url):
     coffee_request = CoffeeRequest.objects.create(user_id=user_id, response_url=response_url)
 
     member = find_a_match()
