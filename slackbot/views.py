@@ -25,7 +25,10 @@ class IndexView(APIView):
         return Response(members)
 
     def post(self, request):
-        create_coffee_request(request)
+        user_id = request.POST.get("user_id")
+        response_url = request.POST.get("response_url")
+
+        create_coffee_request(user_id=user_id, response_url=response_url)
 
         return Response("Hi, we are looking for a coffee buddy for you!")
 

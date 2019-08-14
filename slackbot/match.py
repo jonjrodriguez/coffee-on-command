@@ -1,26 +1,26 @@
 import random
 
+from celery import app
 from django.utils import timezone
 
 from .client import get_client
 from .models import CoffeeRequest, Match
 
 
-def find_a_match():
+def find_a_match(*, user_id):
     members = get_client().get_channel_participants()
+    members.remove(user_id)
     member = random.choice(members)
 
     return member
 
 
-def create_coffee_request(request):
-    user_id = request.POST.get("user_id")
-    response_url = request.POST.get("response_url")
+def create_coffee_request(*, user_id, response_url):
     coffee_request = CoffeeRequest.objects.create(
         user_id=user_id, response_url=response_url
     )
 
-    member = find_a_match()
+    member = find_a_match(user_id=user_id)
     match = Match.objects.create(
         user_id=member, coffee_request=coffee_request, expiration=timezone.now()
     )
@@ -62,7 +62,7 @@ def on_match_failure(match):
     coffee_request = match.coffee_request
 
     requested_user = coffee_request.user_id
-    member = find_a_match()
+    member = find_a_match(user_id=requested_user)
 
     match = Match.objects.create(
         user_id=member, coffee_request=coffee_request, expiration=timezone.now()
