@@ -1,7 +1,6 @@
 import random
 from uuid import uuid4
 
-from celery import app
 from django.utils import timezone
 
 from .client import get_client

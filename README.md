@@ -54,3 +54,15 @@ You can also view and replay your incoming requests at http://127.0.0.1:4040.
 5. Enable incoming webhooks
    - Add new webhook to a development channel for your slack app
 6. Finally go to `Install App` -> `Reinstall App`
+
+
+## Celery Setup
+If you want to run it async, you should install redis and start redis
+```
+redis-server
+```
+Start celery worker
+```
+celery worker --loglevel=info -A app
+```
+If you want to run it synchronously, you can set `CELERY_TASK_ALWAYS_EAGER=True` in `settings.py`
