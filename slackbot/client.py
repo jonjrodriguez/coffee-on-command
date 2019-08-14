@@ -1,5 +1,6 @@
 from typing import List
 
+from requests import post
 from slack import WebClient
 
 from app import settings
@@ -27,6 +28,9 @@ class Client:
 
     def post_to_private(self, receiver_id: str, blocks: List) -> None:
         self._client.chat_postMessage(channel=receiver_id, blocks=blocks, as_user=True)
+
+    def post_to_response_url(self, response_url: str, body: dict) -> None:
+        post(response_url, json=body)
 
     def is_bot(self, user) -> bool:
         response = self._client.users_info(user=user)

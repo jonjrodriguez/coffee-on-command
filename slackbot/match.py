@@ -3,41 +3,26 @@ from uuid import uuid4
 
 from django.utils import timezone
 
-from .client import get_client
+from .client import Client
 from .models import CoffeeRequest, Match
 
 
-def find_a_match(*, user_id, coffee_request):
-    client = get_client()
-    members = client.get_channel_participants()
-    members.remove(user_id)
-
-    while len(members):
-        member = random.choice(members)
-        is_bot = get_client().is_bot(user=member)
-        matches = Match.objects.filter(coffee_request=coffee_request, user_id=member)
-        if is_bot or matches:
-            members.remove(member)
-        else:
-            break
-
-    if not members:
-        client.post_to_private(
-            receiver_id=user_id,
-            blocks=[{"type": "section", "text": {"type": "mrkdwn", "text": "No coffee buddies found"}}]
-        )
-        return None
-
-    return member
+def get_matcher(*, client):
+    return Matcher(client=client)
 
 
-def create_request(*, user_id, response_url):
-    coffee_request = CoffeeRequest.objects.create(
-        user_id=user_id, response_url=response_url
-    )
+class Matcher:
+    def __init__(self, client: Client):
+        self.client = client
 
-    member = find_a_match(user_id=user_id, coffee_request=coffee_request)
-    if member:
+    def create_request(self, user_id, response_url):
+        return CoffeeRequest.objects.create(user_id=user_id, response_url=response_url)
+
+    def create_match(self, coffee_request):
+        member = self.find_match(coffee_request)
+        if not member:
+            return None
+
         return Match.objects.create(
             user_id=member,
             coffee_request=coffee_request,
@@ -45,54 +30,43 @@ def create_request(*, user_id, response_url):
             block_id=uuid4(),
         )
 
+    def find_match(self, coffee_request):
+        members = self.client.get_channel_participants()
+        members.remove(coffee_request.user_id)
 
-def accept_request(*, user_id, block_id, response_url):
-    match = Match.objects.get(user_id=user_id, block_id=block_id)
+        while len(members):
+            member = random.choice(members)
+            is_bot = self.client.is_bot(user=member)
+            previous_match = Match.objects.filter(
+                coffee_request=coffee_request, user_id=member
+            ).exists()
 
-    match.is_accepted = True
-    match.response_url = response_url
-    match.save()
+            if is_bot or previous_match:
+                members.remove(member)
+                continue
 
-    coffee_request = match.coffee_request
-    coffee_request.status = CoffeeRequest.STATUS_MATCHED
-    coffee_request.save()
+            return member
 
-    on_match_success(match)
+        return None
 
+    def accept_request(self, user_id, block_id, response_url):
+        match = Match.objects.get(user_id=user_id, block_id=block_id)
 
-def on_match_success(match):
-    coffee_request = match.coffee_request
+        match.is_accepted = True
+        match.response_url = response_url
+        match.save()
 
-    requested_user = coffee_request.user_id
-    matched_user = match.user_id
+        coffee_request = match.coffee_request
+        coffee_request.status = CoffeeRequest.STATUS_MATCHED
+        coffee_request.save()
 
-    get_client().post_to_channel(
-        f"<@{requested_user}> is going to grab coffee with <@{matched_user}>"
-    )
+        return match
 
+    def deny_request(self, user_id, block_id, response_url):
+        match = Match.objects.get(user_id=user_id, block_id=block_id)
 
-def deny_request(*, user_id, block_id, response_url):
-    match = Match.objects.get(user_id=user_id, block_id=block_id)
+        match.is_accepted = False
+        match.response_url = response_url
+        match.save()
 
-    match.is_accepted = False
-    match.response_url = response_url
-    match.save()
-
-    on_match_failure(match)
-
-
-def on_match_failure(match):
-    coffee_request = match.coffee_request
-
-    requested_user = coffee_request.user_id
-    member = find_a_match(user_id=requested_user, coffee_request=coffee_request)
-
-    if member:
-        match = Match.objects.create(
-            user_id=member,
-            coffee_request=coffee_request,
-            expiration=timezone.now(),
-            block_id=uuid4(),
-        )
-
-        get_client().send_invite(match.user_id, match.block_id)
+        return match
