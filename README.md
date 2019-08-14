@@ -48,7 +48,7 @@ You can also view and replay your incoming requests at http://127.0.0.1:4040.
 1. Go to https://api.slack.com/apps -> Create App
    - Enter App Name
    - Choose development workspace
-2. Enable Interactive Components using your `ngrok` address
+2. Enable Interactive Components using your `ngrok` address + `/response`
 3. Enable slash commands using your `ngrok` address and a unique command
 4. Create a bot user
 5. Enable incoming webhooks

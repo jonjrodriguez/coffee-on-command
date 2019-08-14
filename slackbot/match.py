@@ -1,4 +1,5 @@
 import random
+from uuid import uuid4
 
 from celery import app
 from django.utils import timezone
@@ -22,7 +23,10 @@ def create_coffee_request(*, user_id, response_url):
 
     member = find_a_match(user_id=user_id)
     match = Match.objects.create(
-        user_id=member, coffee_request=coffee_request, expiration=timezone.now()
+        user_id=member,
+        coffee_request=coffee_request,
+        expiration=timezone.now(),
+        block_id=uuid4(),
     )
     on_match_success(match)
 
