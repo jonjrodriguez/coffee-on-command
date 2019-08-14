@@ -2,8 +2,8 @@ import random
 
 from django.utils import timezone
 
-from client import get_client
-from slackbot.models import CoffeeRequest, Match
+from .client import get_client
+from .models import CoffeeRequest, Match
 
 
 def find_a_match():
@@ -16,10 +16,14 @@ def find_a_match():
 def create_coffee_request(request):
     user_id = request.POST.get("user_id")
     response_url = request.POST.get("response_url")
-    coffee_request = CoffeeRequest.objects.create(user_id=user_id, response_url=response_url)
+    coffee_request = CoffeeRequest.objects.create(
+        user_id=user_id, response_url=response_url
+    )
 
     member = find_a_match()
-    match = Match.objects.create(user_id=member, coffee_request=coffee_request, expiration=timezone.now())
+    match = Match.objects.create(
+        user_id=member, coffee_request=coffee_request, expiration=timezone.now()
+    )
     on_match_success(match)
 
 
@@ -29,5 +33,37 @@ def on_match_success(match):
     requested_user = coffee_request.user_id
     matched_user = match.user_id
 
-    get_client().post_to_channel(f"<@{requested_user}> is going to grab coffee with <@{matched_user}>")
+    get_client().post_to_channel(
+        f"<@{requested_user}> is going to grab coffee with <@{matched_user}>"
+    )
 
+
+def accept_match(user, block_id, response_url):
+    match = Match.objects.get(user_id=user, block_id=block_id)
+
+    match.is_accepted = True
+    match.response_url = response_url
+    match.save()
+
+    on_match_success(match)
+
+
+def deny_match(user, block_id, response_url):
+    match = Match.objects.get(user_id=user, block_id=block_id)
+
+    match.is_accepted = False
+    match.response_url = response_url
+    match.save()
+
+    on_match_failure(match)
+
+
+def on_match_failure(match):
+    coffee_request = match.coffee_request
+
+    requested_user = coffee_request.user_id
+    member = find_a_match()
+
+    match = Match.objects.create(
+        user_id=member, coffee_request=coffee_request, expiration=timezone.now()
+    )
