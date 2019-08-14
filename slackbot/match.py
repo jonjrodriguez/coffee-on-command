@@ -10,7 +10,11 @@ from .models import CoffeeRequest, Match
 def find_a_match(*, user_id):
     members = get_client().get_channel_participants()
     members.remove(user_id)
+
     member = random.choice(members)
+    while get_client().is_bot(user=member):
+        members.remove(member)
+        member = random.choice(members)
 
     return member
 

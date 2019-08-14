@@ -28,6 +28,11 @@ class Client:
     def post_to_private(self, receiver_id: str, blocks: List) -> None:
         self._client.chat_postMessage(channel=receiver_id, blocks=blocks)
 
+    def is_bot(self, user) -> bool:
+        response = self._client.users_info(user=user)
+        response_user = response.data["user"]
+        return response_user["is_bot"]
+
     def send_invite(self, receiver_id: str, block_id: str) -> None:
         channel_id = self._client.conversations_open(users=receiver_id).data.get('channel').get('id')
         blocks = [
