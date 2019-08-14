@@ -3,12 +3,13 @@ import random
 from celery import app
 from django.utils import timezone
 
-from client import get_client
+from .client import get_client
 from slackbot.models import CoffeeRequest, Match
 
 
-def find_a_match():
+def find_a_match(*, user_id):
     members = get_client().get_channel_participants()
+    members.remove(user_id)
     member = random.choice(members)
 
     return member
@@ -17,7 +18,7 @@ def find_a_match():
 def create_coffee_request(*, user_id, response_url):
     coffee_request = CoffeeRequest.objects.create(user_id=user_id, response_url=response_url)
 
-    member = find_a_match()
+    member = find_a_match(user_id=user_id)
     match = Match.objects.create(user_id=member, coffee_request=coffee_request, expiration=timezone.now())
     on_match_success(match)
 
