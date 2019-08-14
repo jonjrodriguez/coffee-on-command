@@ -33,3 +33,10 @@ class Match(models.Model):
     )
     response_url = models.CharField(max_length=255, blank=True)
     block_id = models.CharField(max_length=255, default="")
+
+
+class Recommendation(models.Model):
+    name = models.CharField(max_length=255)
+    link = models.CharField(max_length=255)
+    specialty = models.CharField(max_length=255)
+
