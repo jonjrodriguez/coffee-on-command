@@ -34,21 +34,16 @@ class Client:
         return response_user["is_bot"]
 
     def send_invite(self, receiver_id: str, block_id: str) -> None:
-        channel_id = self._client.conversations_open(users=receiver_id).data.get('channel').get('id')
+        channel_id = (
+            self._client.conversations_open(users=receiver_id)
+            .data.get("channel")
+            .get("id")
+        )
         blocks = [
+            {"type": "section", "text": {"type": "mrkdwn", "text": "*Coffee Time!*"}},
             {
                 "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "*Coffee Time!*"
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "Are you free to grab a coffee?"
-                },
+                "text": {"type": "mrkdwn", "text": "Are you free to grab a coffee?"},
             },
             {
                 "type": "actions",
@@ -56,24 +51,18 @@ class Client:
                 "elements": [
                     {
                         "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "Approve"
-                        },
+                        "text": {"type": "plain_text", "text": "Approve"},
                         "style": "primary",
-                        "value": "APPROVE"
+                        "value": "APPROVE",
                     },
                     {
                         "type": "button",
-                        "text": {
-                            "type": "plain_text",
-                            "text": "Deny"
-                        },
+                        "text": {"type": "plain_text", "text": "Deny"},
                         "style": "danger",
-                        "value": "DENY"
-                    }
-                ]
-            }
+                        "value": "DENY",
+                    },
+                ],
+            },
         ]
-        
+
         self.post_to_private(receiver_id=channel_id, blocks=blocks)
