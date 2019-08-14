@@ -51,13 +51,13 @@ class Client:
                 "elements": [
                     {
                         "type": "button",
-                        "text": {"type": "plain_text", "text": "Approve"},
+                        "text": {"type": "plain_text", "text": "I'm down!"},
                         "style": "primary",
                         "value": "APPROVE",
                     },
                     {
                         "type": "button",
-                        "text": {"type": "plain_text", "text": "Deny"},
+                        "text": {"type": "plain_text", "text": "Nah..."},
                         "style": "danger",
                         "value": "DENY",
                     },
