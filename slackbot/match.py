@@ -21,13 +21,12 @@ def create_coffee_request(*, user_id, response_url):
     )
 
     member = find_a_match(user_id=user_id)
-    match = Match.objects.create(
+    return Match.objects.create(
         user_id=member,
         coffee_request=coffee_request,
         expiration=timezone.now(),
         block_id=uuid4(),
     )
-    on_match_success(match)
 
 
 def on_match_success(match):
@@ -72,5 +71,7 @@ def on_match_failure(match):
     member = find_a_match(user_id=requested_user)
 
     match = Match.objects.create(
-        user_id=member, coffee_request=coffee_request, expiration=timezone.now()
+        user_id=member, coffee_request=coffee_request, expiration=timezone.now(), block_id=uuid4()
     )
+
+    get_client().send_invite(match.user_id, match.block_id)

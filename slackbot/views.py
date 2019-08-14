@@ -1,11 +1,11 @@
 import json
 
-from app import settings
+from app.settings import SLACK_BOT_TOKEN, SLACK_CHANNEL
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .match import create_coffee_request, accept_match, deny_match
+from .match import create_coffee_request, accept_match, deny_match, find_a_match, on_match_success
 from .models import CoffeeRequest
 from .tasks import process_new_request
 from .client import Client
@@ -14,10 +14,7 @@ from .serializers import Payload
 
 class IndexView(APIView):
     def __init__(self) -> None:
-        slack_bot_token = settings.SLACK_BOT_TOKEN
-        channel = settings.SLACK_CHANNEL
-
-        self.client = Client(slack_bot_token, channel)
+        self.client = Client(SLACK_BOT_TOKEN, SLACK_CHANNEL)
 
     def get(self, request):
         members = self.client.get_channel_participants()
@@ -28,7 +25,8 @@ class IndexView(APIView):
         user_id = request.POST.get("user_id")
         response_url = request.POST.get("response_url")
 
-        process_new_request.delay(user_id=user_id, response_url=response_url)
+        match = process_new_request.delay(user_id=user_id, response_url=response_url)
+        self.client.send_invite(receiver_id=match.user_id, block_id=match.block_id)
 
         return Response("Hi, we are looking for a coffee buddy for you!")
 
