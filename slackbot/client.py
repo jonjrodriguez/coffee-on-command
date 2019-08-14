@@ -2,6 +2,14 @@ from typing import List
 
 from slack import WebClient
 
+from app import settings
+
+
+def get_client():
+    slack_bot_token = settings.SLACK_BOT_TOKEN
+    channel = settings.SLACK_CHANNEL
+    return Client(token=slack_bot_token, channel=channel)
+
 
 class Client:
     _client: WebClient
