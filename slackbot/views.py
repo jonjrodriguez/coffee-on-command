@@ -25,8 +25,7 @@ class IndexView(APIView):
         user_id = request.POST.get("user_id")
         response_url = request.POST.get("response_url")
 
-        match = process_new_request.delay(user_id=user_id, response_url=response_url)
-        self.client.send_invite(receiver_id=match.user_id, block_id=match.block_id)
+        process_new_request.delay(user_id=user_id, response_url=response_url)
 
         return Response("Hi, we are looking for a coffee buddy for you!")
 

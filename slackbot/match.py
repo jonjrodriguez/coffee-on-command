@@ -28,7 +28,6 @@ def create_coffee_request(*, user_id, response_url):
         block_id=uuid4(),
     )
 
-
 def on_match_success(match):
     coffee_request = match.coffee_request
 
