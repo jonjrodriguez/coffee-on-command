@@ -25,7 +25,12 @@ Setup Local DB
 createdb coffee_on_command
 createuser --superuser --createdb --createrole --login --encrypted coffee_on_command
 ./manage.py migrate
+./manage.py createsuperuser
 ```
+
+Setup Local Settings
+
+1. Copy `local_settings.copy` -> `local_settings.py` and update the values
 
 ## Run App
 
