@@ -9,11 +9,35 @@ class AcceptCoffeeRequest(Action):
         matched_user = match.user_id
 
         self.client.post_to_channel(
-            f"<@{requested_user}> is going to grab coffee with <@{matched_user}>"
+            f"<@{requested_user}> is grabbing coffee with <@{matched_user}>"
         )
 
         self.client.post_to_response_url(
             response_url,
             replace=True,
-            text="Hang tight, letting your buddy know! :coffee:",
+            color=True,
+            blocks=[
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
+                    },
+                },
+                {
+                    "type": "context",
+                    "elements": [
+                        {
+                            "type": "mrkdwn",
+                            "text": "Hang tight, letting your buddy know!",
+                        }
+                    ],
+                },
+            ],
+        )
+        self.client.post_to_private(
+            matched_user, text=f"<@{requested_user}> is your buddy!"
+        )
+        self.client.post_to_private(
+            requested_user, text=f"<@{matched_user}> is your buddy!"
         )

@@ -27,14 +27,14 @@ class Client:
     def post_to_channel(self, message: str) -> None:
         self._client.chat_postMessage(channel=self.channel, text=message)
 
-    def post_to_private(self, receiver_id: str, blocks: List, color=False) -> dict:
+    def post_to_private(self, receiver_id, blocks=None, text="", color=False):
         message = {"blocks": blocks, "as_user": True}
 
         if color:
             message["blocks"] = None
             message["attachments"] = [{"color": "#E8E8E8", "blocks": blocks}]
 
-        return self._client.chat_postMessage(channel=receiver_id, **message)
+        return self._client.chat_postMessage(channel=receiver_id, text=text, **message)
 
     def post_to_response_url(
         self, response_url: str, replace=False, text="", blocks=[], color=False
@@ -59,10 +59,12 @@ class Client:
             .get("id")
         )
         blocks = [
-            {"type": "section", "text": {"type": "mrkdwn", "text": "*Coffee Time!*"}},
             {
                 "type": "section",
-                "text": {"type": "mrkdwn", "text": "Are you free to grab a coffee?"},
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
+                },
             },
             {
                 "type": "actions",
@@ -84,7 +86,13 @@ class Client:
             },
         ]
 
-        return self.post_to_private(receiver_id=channel_id, blocks=blocks)
+        return self.post_to_private(receiver_id=channel_id, color=True, blocks=blocks)
 
-    def update(self, channel: str, ts: str, **kwargs) -> dict:
-        return self._client.chat_update(channel=channel, ts=ts, **kwargs)
+    def update(self, channel: str, ts: str, blocks=None, text="", color=False) -> dict:
+        message = {"blocks": blocks, "as_user": True}
+
+        if color:
+            message["blocks"] = None
+            message["attachments"] = [{"color": "#E8E8E8", "blocks": blocks}]
+
+        return self._client.chat_update(channel=channel, ts=ts, text=text, **message)

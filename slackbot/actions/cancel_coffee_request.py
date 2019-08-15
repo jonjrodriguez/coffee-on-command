@@ -33,6 +33,10 @@ class CancelCoffeeRequest(Action):
             ],
         )
 
+        self.client.post_to_private(
+            receiver_id=user_id, text="Oh snap! Maybe next time. :shrug:"
+        )
+
         for match in coffee_request.matches.filter(is_accepted=None):
             match.is_accepted = False
             match.save()
@@ -41,17 +45,12 @@ class CancelCoffeeRequest(Action):
                 channel=match.message.channel,
                 ts=match.message.ts,
                 color=True,
-                as_user=True,
                 blocks=[
-                    {
-                        "type": "section",
-                        "text": {"type": "mrkdwn", "text": "*Coffee Time!*"},
-                    },
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "Are you free to grab a coffee?",
+                            "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
                         },
                     },
                     {

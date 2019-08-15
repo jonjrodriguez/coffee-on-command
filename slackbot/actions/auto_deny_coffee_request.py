@@ -8,18 +8,23 @@ class AutoDenyCoffeeRequest(Action):
             channel=channel,
             ts=ts,
             color=True,
-            as_user=True,
             blocks=[
-                {"type": "section", "text": {"type": "mrkdwn", "text": "*Coffee Time!*"}},
                 {
                     "type": "section",
-                    "text": {"type": "mrkdwn", "text": "Are you free to grab a coffee?"},
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
+                    },
                 },
                 {
-                    "type": "section",
-                    "text": {"type": "mrkdwn", "text": "Sorry, it looks like you were busy."},
+                    "type": "context",
+                    "elements": [{"type": "mrkdwn", "text": "Too slow!"}],
                 },
-            ]
+            ],
+        )
+        self.client.post_to_private(
+            denied_match.user_id,
+            text="Looks like you ran out of time. :disappointed: If you want me to find you another buddy, let me know!",
         )
 
         # Create new request
