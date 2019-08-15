@@ -33,7 +33,7 @@ class CancelCoffeeRequest(Action):
             ],
         )
 
-        for match in coffee_request.matches.all():
+        for match in coffee_request.matches.filter(is_accepted=None):
             match.is_accepted = False
             match.save()
 

@@ -1,10 +1,27 @@
 from .base import Action
+from ..models import CoffeeRequest
 
 
 class CreateCoffeeRequest(Action):
     def execute(self, *, user_id: str, response_url: str):
-        coffee_request = self.matcher.create_request(user_id, response_url)
+        if CoffeeRequest.objects.filter(
+            user_id=user_id, status=CoffeeRequest.STATUS_PENDING
+        ).exists():
+            self.client.post_to_private(
+                receiver_id=user_id,
+                blocks=[
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "Hang in there. :muscle: I'm still looking for your buddy!",
+                        },
+                    }
+                ],
+            )
+            return
 
+        coffee_request = self.matcher.create_request(user_id, response_url)
         match = self.matcher.create_match(coffee_request)
         if not match:
             return
