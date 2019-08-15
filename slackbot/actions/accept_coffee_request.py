@@ -20,14 +20,8 @@ class AcceptCoffeeRequest(Action):
             response_url,
             replace=True,
             color=True,
+            text=COFFEE_REQUEST,
             blocks=[
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": COFFEE_REQUEST,
-                    },
-                },
                 {
                     "type": "context",
                     "elements": [

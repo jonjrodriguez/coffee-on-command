@@ -21,18 +21,12 @@ class CancelCoffeeRequest(Action):
             else "I canceled your request"
         )
 
-        self.client.update(
-            channel=coffee_request.initial_message.channel,
-            ts=coffee_request.initial_message.ts,
+        self.client.post_to_response_url(
+            response_url=response_url,
+            replace=True,
             color=True,
+            text=SEARCHING_FOR_COFFEE_BUDDY,
             blocks=[
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": SEARCHING_FOR_COFFEE_BUDDY,
-                    },
-                },
                 {
                     "type": "context",
                     "elements": [{"type": "mrkdwn", "text": cancel_text}],

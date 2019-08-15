@@ -6,7 +6,7 @@ LETTING_YOUR_BUDDY_KNOW = "Hang tight, letting your buddy know!"
 SUCCESS_MESSAGE = "Woo hoo! Go get your brew!"
 MAYBE_NEXT_TIME = "Oh snap! Maybe next time. :shrug:"
 NO_MATCHES_FOUND = "No matches found!"
-NO_REPLY = "You replied no."
+NO_REPLY = "Nah..."
 RAN_OUT_OF_TIME = "Looks like you ran out of time. :disappointed: If you want me to find you another buddy, let me know!"
 REQUEST_CANCELED = "Sorry, the person cancelled their request."
 
