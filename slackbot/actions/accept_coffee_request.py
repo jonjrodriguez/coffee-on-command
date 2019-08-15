@@ -1,3 +1,4 @@
+from slackbot.models import Recommendation
 from .base import Action
 
 
@@ -7,6 +8,8 @@ class AcceptCoffeeRequest(Action):
 
         requested_user = match.coffee_request.user_id
         matched_user = match.user_id
+
+        recommendation = Recommendation.objects.order_by('?').first()
 
         self.client.post_to_channel(
             f"<@{requested_user}> is grabbing coffee with <@{matched_user}>"
@@ -36,7 +39,10 @@ class AcceptCoffeeRequest(Action):
             ],
         )
         self.client.post_to_private(
-            matched_user, text=f"<@{requested_user}> is your buddy!"
+            matched_user,
+            text=f"<@{requested_user}> is your buddy!\n"
+            f"We recommend {recommendation.name} and trying {recommendation.specialty}.\n"
+            f"{recommendation.link}"
         )
 
         self.client.update(
@@ -60,5 +66,8 @@ class AcceptCoffeeRequest(Action):
             ],
         )
         self.client.post_to_private(
-            requested_user, text=f"<@{matched_user}> is your buddy!"
+            requested_user,
+            text=f"<@{matched_user}> is your buddy!\n"
+            f"We recommend {recommendation.name} and trying {recommendation.specialty}.\n"
+            f"{recommendation.link}"
         )
