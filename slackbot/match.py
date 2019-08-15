@@ -5,6 +5,7 @@ from django.db.models import F, Count, OuterRef, Subquery, Exists
 from django.db.models.fields import IntegerField
 from django.db.models.functions import Coalesce
 from django.utils import timezone
+import pytz
 
 from .client import Client
 from .models import CoffeeRequest, Match, SlackMessage, Member
@@ -55,13 +56,13 @@ class Matcher:
         return match
 
     def find_match(self, coffee_request):
-        now = timezone.now()
+        date = timezone.localdate()
+        # time start/end are stored in EST
+        time = timezone.localtime(timezone=pytz.timezone("US/Eastern")).time()
 
         coffees_drank = (
             Match.objects.filter(
-                is_accepted=True,
-                expiration__date=now.date(),
-                user_id=OuterRef("user_id"),
+                is_accepted=True, expiration__date=date, user_id=OuterRef("user_id")
             )
             .values("user_id")
             .annotate(count=Count("*"))
@@ -72,22 +73,27 @@ class Matcher:
             is_accepted=None, user_id=OuterRef("user_id")
         )
 
+        previously_matched = Match.objects.filter(
+            coffee_request=coffee_request, user_id=OuterRef("user_id")
+        )
+
         members = (
             Member.objects.annotate(
                 coffees_drank=Coalesce(
                     Subquery(coffees_drank, output_field=IntegerField()), 0
                 ),
                 pending_match=Exists(pending_match),
-            )
-            .filter(
+                previously_matched=Exists(previously_matched),
+            ).filter(
                 is_bot=False,
                 pending_match=False,
+                previously_matched=False,
                 coffees_drank__lt=F("coffee_per_day"),
-                start_time__lte=now.time(),
-                end_time__gte=now.time(),
+                start_time__lte=time,
+                end_time__gte=time,
                 status=Member.STATUS_ACTIVE,
             )
-            .exclude(user_id=coffee_request.user_id)
+            # .exclude(user_id=coffee_request.user_id)
             .all()
         )
 
