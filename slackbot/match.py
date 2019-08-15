@@ -1,10 +1,13 @@
 from datetime import timedelta
 import random
 
+from django.db.models import F, Count, OuterRef, Subquery, Exists
+from django.db.models.fields import IntegerField
+from django.db.models.functions import Coalesce
 from django.utils import timezone
 
 from .client import Client
-from .models import CoffeeRequest, Match, SlackMessage
+from .models import CoffeeRequest, Match, SlackMessage, Member
 
 REQUEST_EXPIRATION_MINUTES = 10
 MATCH_RESPONSE_EXPIRATION_MINUTES = 2
@@ -33,6 +36,8 @@ class Matcher:
 
         member = self.find_match(coffee_request)
         if not member:
+            coffee_request.status = CoffeeRequest.STATUS_CANCELLED
+            coffee_request.save()
             self.send_no_matches_message_to_requesting_user(coffee_request.user_id)
             return None
 
@@ -50,8 +55,47 @@ class Matcher:
         return match
 
     def find_match(self, coffee_request):
-        members = self.client.get_channel_participants()
-        members.remove(coffee_request.user_id)
+        now = timezone.now()
+
+        coffees_drank = (
+            Match.objects.filter(
+                is_accepted=True,
+                expiration__date=now.date(),
+                user_id=OuterRef("user_id"),
+            )
+            .values("user_id")
+            .annotate(count=Count("*"))
+            .values("count")
+        )
+
+        pending_match = Match.objects.filter(
+            is_accepted=None, user_id=OuterRef("user_id")
+        )
+
+        members = (
+            Member.objects.annotate(
+                coffees_drank=Coalesce(
+                    Subquery(coffees_drank, output_field=IntegerField()), 0
+                ),
+                pending_match=Exists(pending_match),
+            )
+            .filter(
+                is_bot=False,
+                pending_match=False,
+                coffees_drank__lt=F("coffee_per_day"),
+                start_time__lte=now.time(),
+                end_time__gte=now.time(),
+                status=Member.STATUS_ACTIVE,
+            )
+            .exclude(user_id=coffee_request.user_id)
+            .all()
+        )
+
+        if not members:
+            return None
+
+        member = random.choice(members)
+        return member.user_id
 
         while len(members):
             member = random.choice(members)

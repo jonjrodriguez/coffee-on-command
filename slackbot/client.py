@@ -5,6 +5,8 @@ from slack import WebClient
 
 from app.settings import SLACK
 
+from .models import Member
+
 
 def get_client():
     slack_bot_token = SLACK.get("BOT_TOKEN")
@@ -21,7 +23,7 @@ class Client:
         self.channel = channel
 
     def assert_channel_member(self, user_id) -> bool:
-        if user_id in self.get_channel_participants():
+        if Member.objects.filter(user_id=user_id, status=Member.STATUS_ACTIVE).exists():
             return True
 
         conversation = self._client.conversations_info(channel=self.channel)
@@ -39,10 +41,6 @@ class Client:
             ],
         )
         return False
-
-    def get_channel_participants(self) -> List[str]:
-        response = self._client.conversations_members(channel=self.channel)
-        return response.data["members"]
 
     def post_to_channel(self, message: str) -> None:
         self._client.chat_postMessage(channel=self.channel, text=message)

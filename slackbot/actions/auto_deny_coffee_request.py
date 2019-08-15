@@ -32,27 +32,22 @@ class AutoDenyCoffeeRequest(Action):
         coffee_request = denied_match.coffee_request
         match = self.matcher.create_match(coffee_request)
 
-        if match:
-            return
-
-        coffee_request.status = CoffeeRequest.STATUS_CANCELLED
-        coffee_request.save()
-
-        self.client.update(
-            channel=coffee_request.initial_message.channel,
-            ts=coffee_request.initial_message.ts,
-            color=True,
-            blocks=[
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": "I'm searching for your coffee buddy. :coffee: Let me know if you change your mind. :wink:",
+        if not match:
+            self.client.update(
+                channel=coffee_request.initial_message.channel,
+                ts=coffee_request.initial_message.ts,
+                color=True,
+                blocks=[
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "I'm searching for your coffee buddy. :coffee: Let me know if you change your mind. :wink:",
+                        },
                     },
-                },
-                {
-                    "type": "context",
-                    "elements": [{"type": "mrkdwn", "text": "No matches found!"}],
-                },
-            ],
-        )
+                    {
+                        "type": "context",
+                        "elements": [{"type": "mrkdwn", "text": "No matches found!"}],
+                    },
+                ],
+            )
