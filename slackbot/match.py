@@ -95,8 +95,7 @@ class Matcher:
                 end_time__gte=time,
                 status=Member.STATUS_ACTIVE,
             )
-            # .exclude(user_id=coffee_request.user_id)
-            .all()
+            .exclude(user_id=coffee_request.user_id)
         )
 
         if not members:
