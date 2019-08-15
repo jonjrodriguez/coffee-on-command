@@ -58,7 +58,6 @@ class Matcher:
         return match
 
     def find_match(self, coffee_request):
-        return "UMEGJJKSA"
         date = timezone.localdate()
         # time start/end are stored in EST
         time = timezone.localtime(timezone=pytz.timezone("US/Eastern")).time()
