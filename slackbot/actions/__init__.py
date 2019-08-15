@@ -4,3 +4,4 @@ from .cancel_coffee_request import CancelCoffeeRequest
 from .create_coffee_request import CreateCoffeeRequest
 from .deny_coffee_request import DenyCoffeeRequest
 from .activate_member import ActivateMemberAction
+from .deactivate_member import DeactivateMemberAction

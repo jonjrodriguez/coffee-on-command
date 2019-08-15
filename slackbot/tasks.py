@@ -9,6 +9,7 @@ from .actions import (
     ActivateMemberAction,
     CancelCoffeeRequest,
     CreateCoffeeRequest,
+    DeactivateMemberAction,
     DenyCoffeeRequest,
 )
 
@@ -39,9 +40,12 @@ def process_event_webhook(*, event):
     event_type = event.get("type")
     channel = event.get("channel")
 
-    if event_type == "member_joined_channel" and channel == SLACK.get("CHANNEL"):
+    if channel == SLACK.get("CHANNEL"):
         user_id = event.get("user")
-        ActivateMemberAction().execute(user_id=user_id)
+        if event_type == "member_joined_channel":
+            ActivateMemberAction().execute(user_id=user_id)
+        elif event_type == "member_left_channel":
+            DeactivateMemberAction().execute(user_id=user_id)
 
 
 @shared_task
