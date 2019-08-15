@@ -3,7 +3,7 @@ from ..models import CoffeeRequest
 
 
 class CancelCoffeeRequest(Action):
-    def execute(self, *, user_id, block_id, response_url):
+    def execute(self, *, user_id, block_id, response_url, expired=False):
         coffee_request = CoffeeRequest.objects.filter(
             status=CoffeeRequest.STATUS_PENDING, user_id=user_id, block_id=block_id
         ).first()
@@ -13,6 +13,8 @@ class CancelCoffeeRequest(Action):
 
         coffee_request.status = CoffeeRequest.STATUS_CANCELLED
         coffee_request.save()
+
+        cancel_text = "Sorry, looks like everyone is too busy for coffee. Please try again later!" if expired else "Cancelled"
 
         self.client.post_to_response_url(
             response_url,
@@ -28,7 +30,7 @@ class CancelCoffeeRequest(Action):
                 },
                 {
                     "type": "context",
-                    "elements": [{"type": "mrkdwn", "text": "Cancelled"}],
+                    "elements": [{"type": "mrkdwn", "text": cancel_text}],
                 },
             ],
         )

@@ -6,8 +6,8 @@ from django.utils import timezone
 from .client import Client
 from .models import CoffeeRequest, Match, MatchSlackMessage
 
-
-EXPIRATION_MINUTES = 2
+REQUEST_EXPIRATION_MINUTES = 15
+MATCH_RESPONSE_EXPIRATION_MINUTES = 2
 
 
 def get_matcher(*, client):
@@ -19,7 +19,11 @@ class Matcher:
         self.client = client
 
     def create_request(self, user_id, response_url):
-        return CoffeeRequest.objects.create(user_id=user_id, response_url=response_url)
+        coffee_request = CoffeeRequest.objects.create(user_id=user_id, response_url=response_url)
+
+        self.schedule_request_expiration(coffee_request.id)
+
+        return coffee_request
 
     def create_match(self, coffee_request):
         member = self.find_match(coffee_request)
@@ -27,14 +31,14 @@ class Matcher:
             self.send_no_matches_message_to_requesting_user(coffee_request.user_id)
             return None
 
-        expiration = timezone.now() + timedelta(minutes=EXPIRATION_MINUTES)
+        expiration = timezone.now() + timedelta(minutes=MATCH_RESPONSE_EXPIRATION_MINUTES)
 
         match = Match.objects.create(
             user_id=member, coffee_request=coffee_request, expiration=expiration
         )
 
         self.send_invite_message_to_potential_match_user(match)
-        self.schedule_expiration(match.id, expiration)
+        self.schedule_match_expiration(match.id, expiration)
 
         return match
 
@@ -79,11 +83,18 @@ class Matcher:
 
         return match
 
-    def schedule_expiration(self, match_id, expiration):
+    def schedule_match_expiration(self, match_id, expiration):
         from .tasks import expire_a_match_if_needed
 
         # schedule a task with ETA of expiration time that cancels a pending match if it hasn't been accepted
         expire_a_match_if_needed.apply_async(args=[match_id], eta=expiration)
+
+    def schedule_request_expiration(self, coffee_request_id):
+        from .tasks import expire_a_request_if_needed
+
+        expiration = timezone.now() + timedelta(minutes=REQUEST_EXPIRATION_MINUTES)
+        # schedule a task with ETA of expiration time that cancels a pending match if it hasn't been accepted
+        expire_a_request_if_needed.apply_async(args=[coffee_request_id], eta=expiration)
 
     def send_no_matches_message_to_requesting_user(self, user_id):
         self.client.post_to_private(

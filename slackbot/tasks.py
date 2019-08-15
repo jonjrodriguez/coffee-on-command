@@ -64,3 +64,20 @@ def expire_a_match_if_needed(match_id):
         AutoDenyCoffeeRequest().execute(
             user_id=match.user_id, block_id=match.block_id, ts=match_message.ts, channel=match_message.channel
         )
+
+
+@shared_task
+def expire_a_request_if_needed(coffee_request_id):
+    from .models import CoffeeRequest
+
+    requests = CoffeeRequest.objects.filter(pk=coffee_request_id, status=CoffeeRequest.STATUS_PENDING)
+
+    if requests.exists():
+        coffee_request = requests.first()
+        logger.info("Request has still not been fulfilled. We'll automatically cancel it.")
+        CancelCoffeeRequest().execute(
+            user_id=coffee_request.user_id,
+            block_id=coffee_request.block_id,
+            response_url=coffee_request.response_url,
+            expired=True
+        )
