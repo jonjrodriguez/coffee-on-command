@@ -15,7 +15,8 @@ from .tasks import (
     process_create,
     process_deny,
     process_event_webhook,
-    process_preferences
+    process_request_preferences,
+    process_store_preferences
 )
 
 
@@ -56,25 +57,33 @@ class ResponseView(BaseView):
 
         user_id = payload.data.get("user").get("id")
         response_url = payload.data.get("response_url")
-        action = payload.data.get("actions")[0]
-        block_id = action.get("block_id")
+        actions = payload.data.get("actions")
+        submission = payload.data.get("submission")
 
-        if action.get("value") == "APPROVE":
-            process_accept.delay(
-                user_id=user_id, block_id=block_id, response_url=response_url
-            )
-        elif action.get("value") == "DENY":
-            process_deny.delay(
-                user_id=user_id, block_id=block_id, response_url=response_url
-            )
-        elif action.get("value") == "CANCEL":
-            process_cancel.delay(
-                user_id=user_id, block_id=block_id, response_url=response_url
-            )
-        elif action.get("value") == "PREFERENCES":
-            trigger_id = payload.data.get("trigger_id")
-            process_preferences.delay(
-                user_id=user_id, block_id=block_id, response_url=response_url, trigger_id=trigger_id
+        if actions:
+            action = actions[0]
+            block_id = action.get("block_id")
+            if action.get("value") == "APPROVE":
+                process_accept.delay(
+                    user_id=user_id, block_id=block_id, response_url=response_url
+                )
+            elif action.get("value") == "DENY":
+                process_deny.delay(
+                    user_id=user_id, block_id=block_id, response_url=response_url
+                )
+            elif action.get("value") == "CANCEL":
+                process_cancel.delay(
+                    user_id=user_id, block_id=block_id, response_url=response_url
+                )
+            elif action.get("value") == "PREFERENCES":
+                trigger_id = payload.data.get("trigger_id")
+                process_request_preferences.delay(
+                    user_id=user_id, block_id=block_id, response_url=response_url, trigger_id=trigger_id
+                )
+        if submission:
+            callback_id = payload.data.get("callback_id")
+            process_store_preferences.delay(
+                user_id=user_id, callback_id=callback_id, data=submission, response_url=response_url
             )
 
         return Response()

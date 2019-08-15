@@ -7,3 +7,4 @@ from .activate_member import ActivateMemberAction
 from .deactivate_member import DeactivateMemberAction
 from .remind_coffee_requester import RemindCoffeeRequester
 from .request_preferences import RequestPreferencesAction
+from .store_preferences import StorePreferencesAction
