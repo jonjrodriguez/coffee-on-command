@@ -23,15 +23,13 @@ class Matcher:
     def create_match(self, coffee_request):
         member = self.find_match(coffee_request)
         if not member:
-            self.send_no_matches_message_to_matched_user(coffee_request.user_id)
+            self.send_no_matches_message_to_requesting_user(coffee_request.user_id)
             return None
 
         expiration = timezone.now() + timedelta(minutes=EXPIRATION_MINUTES)
 
         match = Match.objects.create(
-            user_id=member,
-            coffee_request=coffee_request,
-            expiration=expiration,
+            user_id=member, coffee_request=coffee_request, expiration=expiration
         )
 
         self.send_invite_message_to_potential_match_user(match)
@@ -83,10 +81,11 @@ class Matcher:
 
     def schedule_expiration(self, match_id, expiration):
         from .tasks import expire_a_match_if_needed
+
         # schedule a task with ETA of expiration time that cancels a pending match if it hasn't been accepted
         expire_a_match_if_needed.apply_async(args=[match_id], eta=expiration)
 
-    def send_no_matches_message_to_requested_user(self, user_id):
+    def send_no_matches_message_to_requesting_user(self, user_id):
         self.client.post_to_private(
             receiver_id=user_id,
             blocks=[
@@ -101,7 +100,9 @@ class Matcher:
         )
 
     def send_invite_message_to_potential_match_user(self, match):
-        response = self.client.send_invite(receiver_id=match.user_id, block_id=match.block_id)
+        response = self.client.send_invite(
+            receiver_id=match.user_id, block_id=match.block_id
+        )
 
         # Save the postMessage ts so we can update the message later
         ts = response["ts"]
