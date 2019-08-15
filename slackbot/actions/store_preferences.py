@@ -1,5 +1,6 @@
 from datetime import time
 
+from slackbot.strings import PREFERENCES_RECEIVED
 from .base import Action
 from ..models import Member
 
@@ -15,5 +16,5 @@ class StorePreferencesAction(Action):
         self.client.post_to_response_url(
             response_url=response_url,
             replace=True,
-            text="Thanks. Your preferences are all set! Have a hot one on us! :coffee:"
+            text=PREFERENCES_RECEIVED
         )

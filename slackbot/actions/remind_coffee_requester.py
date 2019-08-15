@@ -1,3 +1,4 @@
+from slackbot.strings import HANG_IN_THERE
 from .base import Action
 from ..models import CoffeeRequest
 
@@ -13,5 +14,5 @@ class RemindCoffeeRequester(Action):
 
         self.client.post_to_private(
             user_id,
-            text="Hang in there. :muscle: I'm still looking for your buddy.",
+            text=HANG_IN_THERE,
         )

@@ -7,6 +7,7 @@ from django.db.models.functions import Coalesce
 from django.utils import timezone
 import pytz
 
+from slackbot.strings import COULD_NOT_FIND_MATCH
 from .client import Client
 from .models import CoffeeRequest, Match, SlackMessage, Member
 
@@ -154,7 +155,7 @@ class Matcher:
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "I'm sorry, I couldn't find a buddy. :disappointed: Let's try again later.",
+                        "text": COULD_NOT_FIND_MATCH,
                     },
                 }
             ],

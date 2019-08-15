@@ -1,3 +1,4 @@
+from slackbot.strings import COFFEE_REQUEST, SEARCHING_FOR_COFFEE_BUDDY, RAN_OUT_OF_TIME, NO_MATCHES_FOUND
 from .base import Action
 from ..models import CoffeeRequest
 
@@ -9,12 +10,13 @@ class AutoDenyCoffeeRequest(Action):
             channel=channel,
             ts=ts,
             color=True,
+            text=COFFEE_REQUEST,
             blocks=[
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
+                        "text": COFFEE_REQUEST,
                     },
                 },
                 {
@@ -25,7 +27,7 @@ class AutoDenyCoffeeRequest(Action):
         )
         self.client.post_to_private(
             denied_match.user_id,
-            text="Looks like you ran out of time. :disappointed: If you want me to find you another buddy, let me know!",
+            text=RAN_OUT_OF_TIME,
         )
 
         # Create new request
@@ -37,17 +39,18 @@ class AutoDenyCoffeeRequest(Action):
                 channel=coffee_request.initial_message.channel,
                 ts=coffee_request.initial_message.ts,
                 color=True,
+                text=SEARCHING_FOR_COFFEE_BUDDY,
                 blocks=[
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "I'm searching for your coffee buddy. :coffee: Let me know if you change your mind. :wink:",
+                            "text": SEARCHING_FOR_COFFEE_BUDDY,
                         },
                     },
                     {
                         "type": "context",
-                        "elements": [{"type": "mrkdwn", "text": "No matches found!"}],
+                        "elements": [{"type": "mrkdwn", "text": NO_MATCHES_FOUND}],
                     },
                 ],
             )

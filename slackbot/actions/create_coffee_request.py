@@ -1,3 +1,4 @@
+from slackbot.strings import HANG_IN_THERE, SEARCHING_FOR_COFFEE_BUDDY
 from .base import Action
 from ..models import CoffeeRequest, SlackMessage
 
@@ -12,12 +13,13 @@ class CreateCoffeeRequest(Action):
         ).exists():
             self.client.post_to_private(
                 receiver_id=user_id,
+                text=HANG_IN_THERE,
                 blocks=[
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "Hang in there. :muscle: I'm still looking for your buddy!",
+                            "text": HANG_IN_THERE,
                         },
                     }
                 ],
@@ -32,12 +34,13 @@ class CreateCoffeeRequest(Action):
         response = self.client.post_to_private(
             receiver_id=user_id,
             color=True,
+            text=SEARCHING_FOR_COFFEE_BUDDY,
             blocks=[
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "I'm searching for your coffee buddy. :coffee: Let me know if you change your mind. :wink:",
+                        "text": SEARCHING_FOR_COFFEE_BUDDY,
                     },
                 },
                 {

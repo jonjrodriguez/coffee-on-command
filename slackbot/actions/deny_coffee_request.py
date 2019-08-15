@@ -1,5 +1,5 @@
+from slackbot.strings import COFFEE_REQUEST, MAYBE_NEXT_TIME, SEARCHING_FOR_COFFEE_BUDDY, NO_MATCHES_FOUND, NO_REPLY
 from .base import Action
-from ..models import CoffeeRequest
 
 
 class DenyCoffeeRequest(Action):
@@ -9,21 +9,22 @@ class DenyCoffeeRequest(Action):
             response_url,
             replace=True,
             color=True,
+            text=COFFEE_REQUEST,
             blocks=[
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
+                        "text": COFFEE_REQUEST,
                     },
                 },
                 {
                     "type": "context",
-                    "elements": [{"type": "mrkdwn", "text": "You replied no."}],
+                    "elements": [{"type": "mrkdwn", "text": NO_REPLY}],
                 },
             ],
         )
-        self.client.post_to_private(user_id, text="Oh snap! Maybe next time. :shrug:")
+        self.client.post_to_private(user_id, text=MAYBE_NEXT_TIME)
 
         # Create new request
         coffee_request = denied_match.coffee_request
@@ -34,17 +35,18 @@ class DenyCoffeeRequest(Action):
                 channel=coffee_request.initial_message.channel,
                 ts=coffee_request.initial_message.ts,
                 color=True,
+                text=SEARCHING_FOR_COFFEE_BUDDY,
                 blocks=[
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "I'm searching for your coffee buddy. :coffee: Let me know if you change your mind. :wink:",
+                            "text": SEARCHING_FOR_COFFEE_BUDDY,
                         },
                     },
                     {
                         "type": "context",
-                        "elements": [{"type": "mrkdwn", "text": "No matches found!"}],
+                        "elements": [{"type": "mrkdwn", "text": NO_MATCHES_FOUND}],
                     },
                 ],
             )

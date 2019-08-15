@@ -1,3 +1,4 @@
+from slackbot.strings import SEARCHING_FOR_COFFEE_BUDDY, COFFEE_REQUEST, REQUEST_CANCELED, MAYBE_NEXT_TIME
 from .base import Action
 from ..models import CoffeeRequest
 
@@ -24,12 +25,13 @@ class CancelCoffeeRequest(Action):
             channel=coffee_request.initial_message.channel,
             ts=coffee_request.initial_message.ts,
             color=True,
+            text=SEARCHING_FOR_COFFEE_BUDDY,
             blocks=[
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "I'm searching for your coffee buddy. :coffee: Let me know if you change your mind. :wink:",
+                        "text": SEARCHING_FOR_COFFEE_BUDDY,
                     },
                 },
                 {
@@ -40,7 +42,7 @@ class CancelCoffeeRequest(Action):
         )
 
         self.client.post_to_private(
-            receiver_id=user_id, text="Oh snap! Maybe next time. :shrug:"
+            receiver_id=user_id, text=MAYBE_NEXT_TIME
         )
 
         for match in coffee_request.matches.filter(is_accepted=None):
@@ -51,12 +53,13 @@ class CancelCoffeeRequest(Action):
                 channel=match.initial_message.channel,
                 ts=match.initial_message.ts,
                 color=True,
+                text=COFFEE_REQUEST,
                 blocks=[
                     {
                         "type": "section",
                         "text": {
                             "type": "mrkdwn",
-                            "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
+                            "text": COFFEE_REQUEST,
                         },
                     },
                     {
@@ -64,7 +67,7 @@ class CancelCoffeeRequest(Action):
                         "elements": [
                             {
                                 "type": "mrkdwn",
-                                "text": "Sorry, the person cancelled their request.",
+                                "text": REQUEST_CANCELED,
                             }
                         ],
                     },

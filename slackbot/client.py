@@ -4,6 +4,7 @@ from requests import post
 from slack import WebClient
 
 from app.settings import SLACK
+from slackbot.strings import COFFEE_REQUEST
 
 from .models import Member
 
@@ -84,7 +85,7 @@ class Client:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
+                    "text": COFFEE_REQUEST,
                 },
             },
             {
@@ -107,7 +108,7 @@ class Client:
             },
         ]
 
-        return self.post_to_private(receiver_id=channel_id, color=True, blocks=blocks)
+        return self.post_to_private(receiver_id=channel_id, color=True, blocks=blocks, text=COFFEE_REQUEST)
 
     def update(self, channel: str, ts: str, blocks=None, text="", color=False) -> dict:
         message = {"blocks": blocks, "as_user": True}

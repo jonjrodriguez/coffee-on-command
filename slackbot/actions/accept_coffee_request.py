@@ -1,4 +1,5 @@
 from slackbot.models import Recommendation
+from slackbot.strings import COFFEE_REQUEST, LETTING_YOUR_BUDDY_KNOW, SEARCHING_FOR_COFFEE_BUDDY, SUCCESS_MESSAGE
 from .base import Action
 
 
@@ -19,12 +20,13 @@ class AcceptCoffeeRequest(Action):
             response_url,
             replace=True,
             color=True,
+            text=COFFEE_REQUEST,
             blocks=[
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "Need a little stretch? :ok_woman: Let's grab a coffee?",
+                        "text": COFFEE_REQUEST,
                     },
                 },
                 {
@@ -32,7 +34,7 @@ class AcceptCoffeeRequest(Action):
                     "elements": [
                         {
                             "type": "mrkdwn",
-                            "text": "Hang tight, letting your buddy know!",
+                            "text": LETTING_YOUR_BUDDY_KNOW,
                         }
                     ],
                 },
@@ -49,18 +51,19 @@ class AcceptCoffeeRequest(Action):
             channel=match.coffee_request.initial_message.channel,
             ts=match.coffee_request.initial_message.ts,
             color=True,
+            text=SEARCHING_FOR_COFFEE_BUDDY,
             blocks=[
                 {
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "I'm searching for your coffee buddy. :coffee: Let me know if you change your mind. :wink:",
+                        "text": SEARCHING_FOR_COFFEE_BUDDY,
                     },
                 },
                 {
                     "type": "context",
                     "elements": [
-                        {"type": "mrkdwn", "text": "Woo hoo! Go get your brew!"}
+                        {"type": "mrkdwn", "text": SUCCESS_MESSAGE}
                     ],
                 },
             ],

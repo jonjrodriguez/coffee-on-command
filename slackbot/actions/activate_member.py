@@ -1,3 +1,4 @@
+from slackbot.strings import JOINING_MESSAGE, SET_PREFERENCES
 from .base import Action
 from ..models import Member
 from ..client import get_client
@@ -18,7 +19,7 @@ class ActivateMemberAction(Action):
                     "type": "section",
                     "text": {
                         "type": "mrkdwn",
-                        "text": "Hey there! :wave: Thanks for joining! Let's get some things nailed down:"
+                        "text": JOINING_MESSAGE
                     },
                 },
                 {
@@ -27,7 +28,7 @@ class ActivateMemberAction(Action):
                     "elements": [
                         {
                             "type": "button",
-                            "text": {"type": "plain_text", "text": ":coffee: Set Coffee Preferences"},
+                            "text": {"type": "plain_text", "text": SET_PREFERENCES},
                             "style": "primary",
                             "value": "PREFERENCES",
                         }
