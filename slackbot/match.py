@@ -1,4 +1,3 @@
-import random
 from datetime import timedelta
 
 from django.utils import timezone
@@ -71,7 +70,7 @@ class Matcher:
 
         return match
 
-    def deny_request(self, user_id, block_id, response_url):
+    def deny_request(self, user_id, block_id, response_url=""):
         match = Match.objects.get(user_id=user_id, block_id=block_id)
 
         match.is_accepted = False

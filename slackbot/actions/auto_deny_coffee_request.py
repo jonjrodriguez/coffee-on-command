@@ -2,16 +2,24 @@ from .base import Action
 
 
 class AutoDenyCoffeeRequest(Action):
-    def execute(self, *, user_id, block_id, response_url):
-        self.matcher.deny_request(user_id, block_id, response_url)
-        self.client.post_to_private(
-            receiver_id=user_id,
+    def execute(self, *, user_id, block_id, ts, channel):
+        self.matcher.deny_request(user_id, block_id)
+        self.client.update(
+            channel=channel,
+            ts=ts,
+            color=True,
+            as_user=True,
             blocks=[
+                {"type": "section", "text": {"type": "mrkdwn", "text": "*Coffee Time!*"}},
                 {
                     "type": "section",
-                    "text": {"type": "mrkdwn", "text": "Sorry, you took too long"},
-                }
-            ],
+                    "text": {"type": "mrkdwn", "text": "Are you free to grab a coffee?"},
+                },
+                {
+                    "type": "section",
+                    "text": {"type": "mrkdwn", "text": "Sorry, it looks like you were busy."},
+                },
+            ]
         )
         # Create new request
         # coffee_request = denied_match.coffee_request
