@@ -27,14 +27,14 @@ class Client:
     def post_to_channel(self, message: str) -> None:
         self._client.chat_postMessage(channel=self.channel, text=message)
 
-    def post_to_private(self, receiver_id: str, blocks: List, color=False) -> None:
+    def post_to_private(self, receiver_id: str, blocks: List, color=False) -> dict:
         message = {"blocks": blocks, "as_user": True}
 
         if color:
             message["blocks"] = None
             message["attachments"] = [{"color": "#E8E8E8", "blocks": blocks}]
 
-        self._client.chat_postMessage(channel=receiver_id, **message)
+        return self._client.chat_postMessage(channel=receiver_id, **message)
 
     def post_to_response_url(
         self, response_url: str, replace=False, text="", blocks=[], color=False
@@ -52,7 +52,7 @@ class Client:
         response_user = response.data["user"]
         return response_user["is_bot"]
 
-    def send_invite(self, receiver_id: str, block_id: str) -> None:
+    def send_invite(self, receiver_id: str, block_id: str) -> dict:
         channel_id = (
             self._client.conversations_open(users=receiver_id)
             .data.get("channel")
@@ -84,4 +84,7 @@ class Client:
             },
         ]
 
-        self.post_to_private(receiver_id=channel_id, blocks=blocks)
+        return self.post_to_private(receiver_id=channel_id, blocks=blocks)
+
+    def update(self, channel: str, ts: str, **kwargs) -> dict:
+        return self._client.chat_update(channel=channel, ts=ts, **kwargs)

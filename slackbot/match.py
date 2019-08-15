@@ -1,9 +1,12 @@
-import random
+from datetime import timedelta
 
 from django.utils import timezone
 
 from .client import Client
 from .models import CoffeeRequest, Match
+
+
+EXPIRATION_MINUTES = 2
 
 
 def get_matcher(*, client):
@@ -22,9 +25,17 @@ class Matcher:
         if not member:
             return None
 
-        return Match.objects.create(
-            user_id=member, coffee_request=coffee_request, expiration=timezone.now()
+        expiration = timezone.now() + timedelta(minutes=EXPIRATION_MINUTES)
+
+        match = Match.objects.create(
+            user_id=member,
+            coffee_request=coffee_request,
+            expiration=expiration,
         )
+
+        self.schedule_expiration(match.id, expiration)
+
+        return match
 
     def find_match(self, coffee_request):
         members = self.client.get_channel_participants()
@@ -59,7 +70,7 @@ class Matcher:
 
         return match
 
-    def deny_request(self, user_id, block_id, response_url):
+    def deny_request(self, user_id, block_id, response_url=""):
         match = Match.objects.get(user_id=user_id, block_id=block_id)
 
         match.is_accepted = False
@@ -67,3 +78,8 @@ class Matcher:
         match.save()
 
         return match
+
+    def schedule_expiration(self, match_id, expiration):
+        from .tasks import expire_a_match_if_needed
+        # schedule a task with ETA of expiration time that cancels a pending match if it hasn't been accepted
+        expire_a_match_if_needed.apply_async(args=[match_id], eta=expiration)

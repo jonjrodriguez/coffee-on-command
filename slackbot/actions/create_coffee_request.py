@@ -1,3 +1,4 @@
+from ..models import MatchSlackMessage
 from .base import Action
 
 
@@ -21,7 +22,13 @@ class CreateCoffeeRequest(Action):
             )
             return
 
-        self.client.send_invite(receiver_id=match.user_id, block_id=match.block_id)
+        response = self.client.send_invite(receiver_id=match.user_id, block_id=match.block_id)
+
+        # Save the postMessage ts so we can update the message later
+        ts = response["ts"]
+        channel = response["channel"]
+        MatchSlackMessage.objects.create(ts=ts, channel=channel, match=match)
+
         self.client.post_to_private(
             receiver_id=user_id,
             color=True,

@@ -55,6 +55,12 @@ class Match(models.Model):
     block_id = models.UUIDField(default=uuid4, editable=False, unique=True)
 
 
+class MatchSlackMessage(models.Model):
+    channel = models.CharField(max_length=255)
+    ts = models.CharField(max_length=255)
+    match = models.OneToOneField(to="slackbot.Match", on_delete=models.CASCADE, null=True, related_name="message")
+
+
 class Recommendation(models.Model):
     name = models.CharField(max_length=255)
     link = models.CharField(max_length=255)
