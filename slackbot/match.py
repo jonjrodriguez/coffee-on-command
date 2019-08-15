@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.utils import timezone
 
 from .client import Client
-from .models import CoffeeRequest, Match
+from .models import CoffeeRequest, Match, MatchSlackMessage
 
 
 EXPIRATION_MINUTES = 2
@@ -23,6 +23,7 @@ class Matcher:
     def create_match(self, coffee_request):
         member = self.find_match(coffee_request)
         if not member:
+            self.send_no_matches_message_to_matched_user(coffee_request.user_id)
             return None
 
         expiration = timezone.now() + timedelta(minutes=EXPIRATION_MINUTES)
@@ -33,6 +34,7 @@ class Matcher:
             expiration=expiration,
         )
 
+        self.send_invite_message_to_potential_match_user(match)
         self.schedule_expiration(match.id, expiration)
 
         return match
@@ -83,3 +85,25 @@ class Matcher:
         from .tasks import expire_a_match_if_needed
         # schedule a task with ETA of expiration time that cancels a pending match if it hasn't been accepted
         expire_a_match_if_needed.apply_async(args=[match_id], eta=expiration)
+
+    def send_no_matches_message_to_requested_user(self, user_id):
+        self.client.post_to_private(
+            receiver_id=user_id,
+            blocks=[
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "I'm sorry, I couldn't find a buddy. :disappointed: Let's try again later.",
+                    },
+                }
+            ],
+        )
+
+    def send_invite_message_to_potential_match_user(self, match):
+        response = self.client.send_invite(receiver_id=match.user_id, block_id=match.block_id)
+
+        # Save the postMessage ts so we can update the message later
+        ts = response["ts"]
+        channel = response["channel"]
+        MatchSlackMessage.objects.create(ts=ts, channel=channel, match=match)
