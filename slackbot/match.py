@@ -91,7 +91,7 @@ class Matcher:
                 is_bot=False,
                 pending_match=False,
                 previously_matched=False,
-                coffees_drank__lt=F("coffee_per_day"),
+                coffees_drank__lt=F("coffee_count"),
                 start_time__lte=time,
                 end_time__gte=time,
                 status=Member.STATUS_ACTIVE,
