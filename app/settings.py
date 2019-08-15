@@ -113,13 +113,16 @@ USE_L10N = True
 
 USE_TZ = True
 
-CELERY_BROKER_URL = 'redis://localhost'
+CELERY_BROKER_URL = "redis://localhost"
 CELERY_TASK_ALWAYS_EAGER = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = "/static/"
+
+# Slack settings
+SLACK = {"BOT_TOKEN": "", "CHANNEL": "", "SIGNING_SECRET": ""}
 
 try:
     from .local_settings import *

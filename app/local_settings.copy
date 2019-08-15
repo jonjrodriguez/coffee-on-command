@@ -1,2 +1,7 @@
-SLACK_BOT_TOKEN = ""
-SLACK_CHANNEL = ""
+CELERY_TASK_ALWAYS_EAGER = True
+
+SLACK = {
+    "BOT_TOKEN": "",
+    "CHANNEL": "",
+    "SIGNING_SECRET": "",
+}

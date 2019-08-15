@@ -48,21 +48,29 @@ You can also view and replay your incoming requests at http://127.0.0.1:4040.
 1. Go to https://api.slack.com/apps -> Create App
    - Enter App Name
    - Choose development workspace
-2. Enable Interactive Components using your `ngrok` address + `/response`
-3. Enable slash commands using your `ngrok` address and a unique command
+2. Enable Interactive Components
+   - Request URL: `ngrok` url + "/response"
+3. Enable slash commands
+   - Request URL: `ngrok` url
+   - Command: something unique
 4. Create a bot user
-5. Enable incoming webhooks
-   - Add new webhook to a development channel for your slack app
+5. Enable events
+   - Request URL: `ngrok` url + "/event"
+   - Add Bot events: `member_joined_channel`, `member_left_channel`
 6. Finally go to `Install App` -> `Reinstall App`
 
-
 ## Celery Setup
+
 If you want to run it async, you should install redis and start redis
+
 ```
 redis-server
 ```
+
 Start celery worker
+
 ```
 celery worker --loglevel=info -A app
 ```
-If you want to run it synchronously, you can set `CELERY_TASK_ALWAYS_EAGER=True` in `settings.py`
+
+If you want to run it synchronously, you can set `CELERY_TASK_ALWAYS_EAGER=True` in `local_settings.py`

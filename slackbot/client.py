@@ -3,12 +3,13 @@ from typing import List
 from requests import post
 from slack import WebClient
 
-from app import settings
+from app.settings import SLACK
 
 
 def get_client():
-    slack_bot_token = settings.SLACK_BOT_TOKEN
-    channel = settings.SLACK_CHANNEL
+    slack_bot_token = SLACK.get("BOT_TOKEN")
+    channel = SLACK.get("CHANNEL")
+
     return Client(token=slack_bot_token, channel=channel)
 
 

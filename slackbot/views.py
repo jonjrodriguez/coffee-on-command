@@ -53,10 +53,11 @@ class ResponseView(APIView):
 
 class EventsView(APIView):
     def post(self, request):
-        event = request.data.get("event")
-        process_event_webhook.delay(event=event)
-
         challenge = request.data.get("challenge")
         if challenge:
             return Response(data={"challenge": challenge})
+
+        event = request.data.get("event")
+        process_event_webhook.delay(event=event)
+
         return Response()
