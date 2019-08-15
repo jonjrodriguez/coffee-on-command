@@ -1,5 +1,5 @@
 from .base import Action
-from ..models import CoffeeRequest
+from ..models import CoffeeRequest, SlackMessage
 
 
 class CreateCoffeeRequest(Action):
@@ -29,7 +29,7 @@ class CreateCoffeeRequest(Action):
         if not match:
             return
 
-        self.client.post_to_private(
+        response = self.client.post_to_private(
             receiver_id=user_id,
             color=True,
             blocks=[
@@ -54,3 +54,9 @@ class CreateCoffeeRequest(Action):
                 },
             ],
         )
+
+        message = SlackMessage.objects.create(
+            ts=response["ts"], channel=response["channel"]
+        )
+        coffee_request.initial_message = message
+        coffee_request.save()

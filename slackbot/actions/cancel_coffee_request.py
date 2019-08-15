@@ -14,11 +14,15 @@ class CancelCoffeeRequest(Action):
         coffee_request.status = CoffeeRequest.STATUS_CANCELLED
         coffee_request.save()
 
-        cancel_text = "Sorry, looks like everyone is too busy for coffee. Please try again later!" if expired else "Cancelled"
+        cancel_text = (
+            "Sorry, looks like everyone is too busy for coffee. Please try again later!"
+            if expired
+            else "Cancelled"
+        )
 
-        self.client.post_to_response_url(
-            response_url,
-            replace=True,
+        self.client.update(
+            channel=coffee_request.initial_message.channel,
+            ts=coffee_request.initial_message.ts,
             color=True,
             blocks=[
                 {
@@ -44,8 +48,8 @@ class CancelCoffeeRequest(Action):
             match.save()
 
             self.client.update(
-                channel=match.message.channel,
-                ts=match.message.ts,
+                channel=match.initial_message.channel,
+                ts=match.initial_message.ts,
                 color=True,
                 blocks=[
                     {

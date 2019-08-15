@@ -4,9 +4,9 @@ import random
 from django.utils import timezone
 
 from .client import Client
-from .models import CoffeeRequest, Match, MatchSlackMessage
+from .models import CoffeeRequest, Match, SlackMessage
 
-REQUEST_EXPIRATION_MINUTES = 15
+REQUEST_EXPIRATION_MINUTES = 10
 MATCH_RESPONSE_EXPIRATION_MINUTES = 2
 
 
@@ -19,19 +19,26 @@ class Matcher:
         self.client = client
 
     def create_request(self, user_id, response_url):
-        coffee_request = CoffeeRequest.objects.create(user_id=user_id, response_url=response_url)
+        coffee_request = CoffeeRequest.objects.create(
+            user_id=user_id, response_url=response_url
+        )
 
         self.schedule_request_expiration(coffee_request.id)
 
         return coffee_request
 
     def create_match(self, coffee_request):
+        if coffee_request.status != CoffeeRequest.STATUS_PENDING:
+            return None
+
         member = self.find_match(coffee_request)
         if not member:
             self.send_no_matches_message_to_requesting_user(coffee_request.user_id)
             return None
 
-        expiration = timezone.now() + timedelta(minutes=MATCH_RESPONSE_EXPIRATION_MINUTES)
+        expiration = timezone.now() + timedelta(
+            minutes=MATCH_RESPONSE_EXPIRATION_MINUTES
+        )
 
         match = Match.objects.create(
             user_id=member, coffee_request=coffee_request, expiration=expiration
@@ -43,6 +50,7 @@ class Matcher:
         return match
 
     def find_match(self, coffee_request):
+        return "UME39QL95"
         members = self.client.get_channel_participants()
         members.remove(coffee_request.user_id)
 
@@ -97,7 +105,7 @@ class Matcher:
         expire_a_request_if_needed.apply_async(args=[coffee_request_id], eta=expiration)
 
     def send_no_matches_message_to_requesting_user(self, user_id):
-        self.client.post_to_private(
+        return self.client.post_to_private(
             receiver_id=user_id,
             blocks=[
                 {
@@ -118,4 +126,6 @@ class Matcher:
         # Save the postMessage ts so we can update the message later
         ts = response["ts"]
         channel = response["channel"]
-        MatchSlackMessage.objects.create(ts=ts, channel=channel, match=match)
+        message = SlackMessage.objects.create(ts=ts, channel=channel)
+        match.initial_message = message
+        match.save()

@@ -60,7 +60,7 @@ def expire_a_match_if_needed(match_id):
     if matches.exists():
         logger.info("Match has not been accepted but has expired.")
         match = matches.first()
-        match_message = match.message
+        match_message = match.initial_message
         AutoDenyCoffeeRequest().execute(
             user_id=match.user_id, block_id=match.block_id, ts=match_message.ts, channel=match_message.channel
         )

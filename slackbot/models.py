@@ -39,6 +39,12 @@ class CoffeeRequest(models.Model):
         max_length=255, choices=STATUS_CHOICES, default=STATUS_PENDING
     )
     block_id = models.UUIDField(default=uuid4, editable=False, unique=True)
+    initial_message = models.OneToOneField(
+        to="slackbot.SlackMessage",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="coffee_request",
+    )
 
 
 class Match(models.Model):
@@ -53,12 +59,17 @@ class Match(models.Model):
     )
     response_url = models.CharField(max_length=255, blank=True)
     block_id = models.UUIDField(default=uuid4, editable=False, unique=True)
+    initial_message = models.OneToOneField(
+        to="slackbot.SlackMessage",
+        on_delete=models.CASCADE,
+        null=True,
+        related_name="match",
+    )
 
 
-class MatchSlackMessage(models.Model):
+class SlackMessage(models.Model):
     channel = models.CharField(max_length=255)
     ts = models.CharField(max_length=255)
-    match = models.OneToOneField(to="slackbot.Match", on_delete=models.CASCADE, null=True, related_name="message")
 
 
 class Recommendation(models.Model):
