@@ -12,6 +12,7 @@ from .actions import (
     DeactivateMemberAction,
     DenyCoffeeRequest,
     RemindCoffeeRequester,
+    RequestPreferencesAction,
 )
 
 logger = get_task_logger(__name__)
@@ -53,6 +54,12 @@ def process_event_webhook(*, event):
 def process_cancel(*, user_id, block_id, response_url):
     CancelCoffeeRequest().execute(
         user_id=user_id, block_id=block_id, response_url=response_url
+    )
+
+@shared_task
+def process_preferences(*, user_id, block_id, response_url, trigger_id):
+    RequestPreferencesAction().execute(
+        user_id=user_id, trigger_id=trigger_id
     )
 
 

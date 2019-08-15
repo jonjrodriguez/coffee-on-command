@@ -15,6 +15,7 @@ from .tasks import (
     process_create,
     process_deny,
     process_event_webhook,
+    process_preferences
 )
 
 
@@ -69,6 +70,11 @@ class ResponseView(BaseView):
         elif action.get("value") == "CANCEL":
             process_cancel.delay(
                 user_id=user_id, block_id=block_id, response_url=response_url
+            )
+        elif action.get("value") == "PREFERENCES":
+            trigger_id = payload.data.get("trigger_id")
+            process_preferences.delay(
+                user_id=user_id, block_id=block_id, response_url=response_url, trigger_id=trigger_id
             )
 
         return Response()
