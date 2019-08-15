@@ -1,4 +1,4 @@
-from rest_framework.serializers import Serializer, CharField
+from rest_framework.serializers import Serializer, CharField, JSONField
 
 
 class User(Serializer):
@@ -18,4 +18,7 @@ class Payload(Serializer):
     user = User()
     response_url = CharField()
     actions = Action(many=True)
+    trigger_id = CharField()
+    submission = JSONField()
+    callback_id = CharField()
 

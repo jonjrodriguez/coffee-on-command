@@ -12,6 +12,8 @@ from .actions import (
     DeactivateMemberAction,
     DenyCoffeeRequest,
     RemindCoffeeRequester,
+    RequestPreferencesAction,
+    StorePreferencesAction
 )
 
 logger = get_task_logger(__name__)
@@ -54,6 +56,16 @@ def process_cancel(*, user_id, block_id, response_url):
     CancelCoffeeRequest().execute(
         user_id=user_id, block_id=block_id, response_url=response_url
     )
+
+@shared_task
+def process_request_preferences(*, user_id, block_id, response_url, trigger_id):
+    RequestPreferencesAction().execute(
+        user_id=user_id, trigger_id=trigger_id
+    )
+
+@shared_task
+def process_store_preferences(*, user_id, callback_id, data, response_url):
+    StorePreferencesAction().execute(user_id=user_id, callback_id=callback_id, data=data, response_url=response_url)
 
 
 @shared_task

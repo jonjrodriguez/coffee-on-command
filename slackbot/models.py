@@ -17,7 +17,7 @@ class Member(models.Model):
     status = models.CharField(
         max_length=255, choices=STATUS_CHOICES, default=STATUS_ACTIVE
     )
-    coffee_per_day = models.IntegerField(default=1)
+    coffee_count = models.IntegerField(default=1)
     start_time = models.TimeField(default=time(9))
     end_time = models.TimeField(default=time(17))
 

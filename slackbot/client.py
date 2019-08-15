@@ -54,6 +54,9 @@ class Client:
 
         return self._client.chat_postMessage(channel=receiver_id, text=text, **message)
 
+    def open_dialog(self, dialog, trigger_id):
+        return self._client.dialog_open(dialog=dialog, trigger_id=trigger_id)
+
     def post_to_response_url(
         self, response_url: str, replace=False, text="", blocks=[], color=False
     ) -> None:
