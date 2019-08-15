@@ -12,7 +12,7 @@ def unassign_all_investors_from_representatives(apps, schema_editor):
     Recommendation.objects.create(name="Maman", link="https://goo.gl/maps/vj1mjmbxqV1TXZSr6", specialty="Honey Lavendar Latte")
     Recommendation.objects.create(name="Happy Bones", link="https://goo.gl/maps/aGH65UrSV8g7Cgxw5", specialty="Cappuccino")
     Recommendation.objects.create(name="Bluestone Lane", link="https://g.page/Bluestone-Lane-Spring-St-Nolita?share", specialty="Avo Smash")
-    Recommendation.objects.create(name="Blue Bottle Coffee", link="https://g.page/Bluestone-Lane-Spring-St-Nolita?share", specialty="Flat White")
+    Recommendation.objects.create(name="Blue Bottle Coffee", link="https://goo.gl/maps/epJr5sA3e7dYTj6C9", specialty="Flat White")
     Recommendation.objects.create(name="Laffayette", link="https://goo.gl/maps/K9Eqchu8i7icHm5y9", specialty="Macaroons")
     Recommendation.objects.create(name="Café Grumpy", link="https://goo.gl/maps/VTVQqU3daj5xyhFp8", specialty="Cold Brew")
     Recommendation.objects.create(name="Cha Cha Matcha", link="https://goo.gl/maps/RkUtBXdsKXBEsmac7", specialty="Matcha, of course!")
