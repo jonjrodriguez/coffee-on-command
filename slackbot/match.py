@@ -50,7 +50,6 @@ class Matcher:
         return match
 
     def find_match(self, coffee_request):
-        return "UME39QL95"
         members = self.client.get_channel_participants()
         members.remove(coffee_request.user_id)
 
