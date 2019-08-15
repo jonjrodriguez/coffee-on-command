@@ -1,14 +1,18 @@
 from celery import shared_task
+from celery.utils.log import get_task_logger
 
 from app.settings import SLACK_CHANNEL
 
 from .actions import (
     AcceptCoffeeRequest,
+    AutoDenyCoffeeRequest,
     ActivateMemberAction,
     CancelCoffeeRequest,
     CreateCoffeeRequest,
     DenyCoffeeRequest,
 )
+
+logger = get_task_logger(__name__)
 
 
 @shared_task
@@ -45,3 +49,17 @@ def process_cancel(*, user_id, block_id, response_url):
     CancelCoffeeRequest().execute(
         user_id=user_id, block_id=block_id, response_url=response_url
     )
+
+
+@shared_task
+def expire_a_match_if_needed(match_id):
+    from .models import Match
+
+    matches = Match.objects.filter(pk=match_id, is_accepted=None)
+
+    if matches.exists():
+        logger.info("Match has not been accepted but has expired.")
+        match = matches.first()
+        AutoDenyCoffeeRequest().execute(
+            user_id=match.user_id, block_id=match.block_id, response_url=match.response_url
+        )
