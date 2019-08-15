@@ -1,4 +1,5 @@
 from datetime import time
+from uuid import uuid4
 
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -8,15 +9,14 @@ from django.utils.timezone import now
 class Member(models.Model):
     STATUS_ACTIVE = "active"
     STATUS_INACTIVE = "inactive"
-    STATUS_CHOICES = (
-        (STATUS_ACTIVE, _("Active")),
-        (STATUS_INACTIVE, _("Inactive")),
-    )
+    STATUS_CHOICES = ((STATUS_ACTIVE, _("Active")), (STATUS_INACTIVE, _("Inactive")))
 
     user_id = models.CharField(max_length=255)
     is_bot = models.BooleanField(default=False)
     created = models.DateTimeField(default=now)
-    status = models.CharField(max_length=255, choices=STATUS_CHOICES, default=STATUS_ACTIVE)
+    status = models.CharField(
+        max_length=255, choices=STATUS_CHOICES, default=STATUS_ACTIVE
+    )
     coffee_per_day = models.IntegerField(default=1)
     start_time = models.TimeField(default=time(9))
     end_time = models.TimeField(default=time(17))
@@ -38,6 +38,7 @@ class CoffeeRequest(models.Model):
     status = models.CharField(
         max_length=255, choices=STATUS_CHOICES, default=STATUS_PENDING
     )
+    block_id = models.UUIDField(default=uuid4, editable=False, unique=True)
 
 
 class Match(models.Model):
@@ -51,7 +52,7 @@ class Match(models.Model):
         null=True,
     )
     response_url = models.CharField(max_length=255, blank=True)
-    block_id = models.CharField(max_length=255, default="")
+    block_id = models.UUIDField(default=uuid4, editable=False, unique=True)
 
 
 class Recommendation(models.Model):

@@ -5,11 +5,7 @@ class DenyCoffeeRequest(Action):
     def execute(self, *, user_id, block_id, response_url):
         denied_match = self.matcher.deny_request(user_id, block_id, response_url)
         self.client.post_to_response_url(
-            response_url,
-            body={
-                "replace_original": "true",
-                "text": "Oh snap! Maybe next time. :shrug:",
-            },
+            response_url, replace=True, text="Oh snap! Maybe next time. :shrug:"
         )
 
         # Create new request

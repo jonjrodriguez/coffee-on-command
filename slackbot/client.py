@@ -26,11 +26,25 @@ class Client:
     def post_to_channel(self, message: str) -> None:
         self._client.chat_postMessage(channel=self.channel, text=message)
 
-    def post_to_private(self, receiver_id: str, blocks: List) -> None:
-        self._client.chat_postMessage(channel=receiver_id, blocks=blocks, as_user=True)
+    def post_to_private(self, receiver_id: str, blocks: List, color=False) -> None:
+        message = {"blocks": blocks, "as_user": True}
 
-    def post_to_response_url(self, response_url: str, body: dict) -> None:
-        post(response_url, json=body)
+        if color:
+            message["blocks"] = None
+            message["attachments"] = [{"color": "#E8E8E8", "blocks": blocks}]
+
+        self._client.chat_postMessage(channel=receiver_id, **message)
+
+    def post_to_response_url(
+        self, response_url: str, replace=False, text="", blocks=[], color=False
+    ) -> None:
+        message = {"replace_original": replace, "text": text, "blocks": blocks}
+
+        if color:
+            message["blocks"] = None
+            message["attachments"] = [{"color": "#E8E8E8", "blocks": blocks}]
+
+        post(response_url, json=message)
 
     def is_bot(self, user) -> bool:
         response = self._client.users_info(user=user)

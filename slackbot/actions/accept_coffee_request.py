@@ -14,8 +14,6 @@ class AcceptCoffeeRequest(Action):
 
         self.client.post_to_response_url(
             response_url,
-            body={
-                "replace_original": "true",
-                "text": "Hang tight, letting your buddy know! :coffee:",
-            },
+            replace=True,
+            text="Hang tight, letting your buddy know! :coffee:",
         )

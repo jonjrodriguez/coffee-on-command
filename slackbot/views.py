@@ -4,11 +4,15 @@ import requests
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from app.settings import SLACK_CHANNEL
-from .actions.activate_member import ActivateMemberAction
 from .serializers import Payload
-from .models import Member
-from .tasks import process_accept, process_create, process_deny, process_event_webhook
+from .tasks import (
+    process_accept,
+    process_cancel,
+    process_create,
+    process_deny,
+    process_event_webhook,
+)
+
 
 class IndexView(APIView):
     def post(self, request):
@@ -17,7 +21,7 @@ class IndexView(APIView):
 
         process_create.delay(user_id=user_id, response_url=response_url)
 
-        return Response("Hi, we are looking for a coffee buddy for you!")
+        return Response()
 
 
 class ResponseView(APIView):
@@ -35,8 +39,12 @@ class ResponseView(APIView):
             process_accept.delay(
                 user_id=user_id, block_id=block_id, response_url=response_url
             )
-        else:
+        elif action.get("value") == "DENY":
             process_deny.delay(
+                user_id=user_id, block_id=block_id, response_url=response_url
+            )
+        elif action.get("value") == "CANCEL":
+            process_cancel.delay(
                 user_id=user_id, block_id=block_id, response_url=response_url
             )
 

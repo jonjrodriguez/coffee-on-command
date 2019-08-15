@@ -1,5 +1,4 @@
 import random
-from uuid import uuid4
 
 from django.utils import timezone
 
@@ -24,15 +23,13 @@ class Matcher:
             return None
 
         return Match.objects.create(
-            user_id=member,
-            coffee_request=coffee_request,
-            expiration=timezone.now(),
-            block_id=uuid4(),
+            user_id=member, coffee_request=coffee_request, expiration=timezone.now()
         )
 
     def find_match(self, coffee_request):
         members = self.client.get_channel_participants()
-        members.remove(coffee_request.user_id)
+        if coffee_request.user_id in members:
+            members.remove(coffee_request.user_id)
 
         while len(members):
             member = random.choice(members)
