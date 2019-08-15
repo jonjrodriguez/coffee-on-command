@@ -1,9 +1,10 @@
 from django.contrib import admin
 
-from .models import CoffeeRequest, Match, Recommendation, Member
+from .models import CoffeeRequest, Match, MatchSlackMessage, Member, Recommendation
 
 
 admin.site.register(CoffeeRequest)
 admin.site.register(Match)
-admin.site.register(Recommendation)
+admin.site.register(MatchSlackMessage)
 admin.site.register(Member)
+admin.site.register(Recommendation)

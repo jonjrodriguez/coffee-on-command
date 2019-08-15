@@ -1,7 +1,12 @@
+from datetime import datetime
+from hashlib import sha256
+import hmac
 import json
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+
+from app.settings import SLACK
 
 from .serializers import Payload
 from .tasks import (
@@ -13,7 +18,26 @@ from .tasks import (
 )
 
 
-class IndexView(APIView):
+class BaseView(APIView):
+    def check_permissions(self, request):
+        super().check_permissions(request)
+
+        timestamp = int(request.headers.get("X-Slack-Request-Timestamp", 0))
+        if abs(datetime.now().timestamp() - timestamp) > 60 * 5:
+            self.permission_denied(request, message="Old request")
+
+        sig_basestring = f"v0:{timestamp}:{request.body.decode()}"
+        digest = hmac.digest(
+            SLACK.get("SIGNING_SECRET").encode(), sig_basestring.encode(), sha256
+        )
+        signature = f"v0={digest.hex()}"
+
+        x_slack_signature = request.headers.get("X-Slack-Signature")
+        if not hmac.compare_digest(signature, x_slack_signature):
+            self.permission_denied(request, message="Unverified request")
+
+
+class IndexView(BaseView):
     def post(self, request):
         user_id = request.POST.get("user_id")
         response_url = request.POST.get("response_url")
@@ -23,7 +47,7 @@ class IndexView(APIView):
         return Response()
 
 
-class ResponseView(APIView):
+class ResponseView(BaseView):
     def post(self, request):
         data = json.loads(request.data.get("payload"))
         payload = Payload(data=data)
@@ -50,7 +74,7 @@ class ResponseView(APIView):
         return Response()
 
 
-class EventsView(APIView):
+class EventsView(BaseView):
     def post(self, request):
         challenge = request.data.get("challenge")
         if challenge:
