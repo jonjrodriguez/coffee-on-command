@@ -9,7 +9,6 @@ class DenyCoffeeRequest(Action):
             response_url,
             replace=True,
             color=True,
-            text=COFFEE_REQUEST,
             blocks=[
                 {
                     "type": "section",
@@ -35,7 +34,6 @@ class DenyCoffeeRequest(Action):
                 channel=coffee_request.initial_message.channel,
                 ts=coffee_request.initial_message.ts,
                 color=True,
-                text=SEARCHING_FOR_COFFEE_BUDDY,
                 blocks=[
                     {
                         "type": "section",

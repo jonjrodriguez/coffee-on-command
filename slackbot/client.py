@@ -108,7 +108,7 @@ class Client:
             },
         ]
 
-        return self.post_to_private(receiver_id=channel_id, color=True, blocks=blocks, text=COFFEE_REQUEST)
+        return self.post_to_private(receiver_id=channel_id, color=True, blocks=blocks)
 
     def update(self, channel: str, ts: str, blocks=None, text="", color=False) -> dict:
         message = {"blocks": blocks, "as_user": True}

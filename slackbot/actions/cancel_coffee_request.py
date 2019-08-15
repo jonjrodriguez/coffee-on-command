@@ -18,14 +18,13 @@ class CancelCoffeeRequest(Action):
         cancel_text = (
             "Sorry, looks like everyone is too busy for coffee. Please try again later!"
             if expired
-            else "Cancelled"
+            else "I canceled your request"
         )
 
         self.client.update(
             channel=coffee_request.initial_message.channel,
             ts=coffee_request.initial_message.ts,
             color=True,
-            text=SEARCHING_FOR_COFFEE_BUDDY,
             blocks=[
                 {
                     "type": "section",
@@ -53,7 +52,6 @@ class CancelCoffeeRequest(Action):
                 channel=match.initial_message.channel,
                 ts=match.initial_message.ts,
                 color=True,
-                text=COFFEE_REQUEST,
                 blocks=[
                     {
                         "type": "section",

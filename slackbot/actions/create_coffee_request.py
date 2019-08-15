@@ -13,7 +13,6 @@ class CreateCoffeeRequest(Action):
         ).exists():
             self.client.post_to_private(
                 receiver_id=user_id,
-                text=HANG_IN_THERE,
                 blocks=[
                     {
                         "type": "section",
@@ -34,7 +33,6 @@ class CreateCoffeeRequest(Action):
         response = self.client.post_to_private(
             receiver_id=user_id,
             color=True,
-            text=SEARCHING_FOR_COFFEE_BUDDY,
             blocks=[
                 {
                     "type": "section",

@@ -10,7 +10,6 @@ class AutoDenyCoffeeRequest(Action):
             channel=channel,
             ts=ts,
             color=True,
-            text=COFFEE_REQUEST,
             blocks=[
                 {
                     "type": "section",
@@ -39,7 +38,6 @@ class AutoDenyCoffeeRequest(Action):
                 channel=coffee_request.initial_message.channel,
                 ts=coffee_request.initial_message.ts,
                 color=True,
-                text=SEARCHING_FOR_COFFEE_BUDDY,
                 blocks=[
                     {
                         "type": "section",

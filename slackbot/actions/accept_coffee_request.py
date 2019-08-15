@@ -20,7 +20,6 @@ class AcceptCoffeeRequest(Action):
             response_url,
             replace=True,
             color=True,
-            text=COFFEE_REQUEST,
             blocks=[
                 {
                     "type": "section",
@@ -51,7 +50,6 @@ class AcceptCoffeeRequest(Action):
             channel=match.coffee_request.initial_message.channel,
             ts=match.coffee_request.initial_message.ts,
             color=True,
-            text=SEARCHING_FOR_COFFEE_BUDDY,
             blocks=[
                 {
                     "type": "section",
