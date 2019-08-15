@@ -11,6 +11,7 @@ from .client import Client
 from .models import CoffeeRequest, Match, SlackMessage, Member
 
 REQUEST_EXPIRATION_MINUTES = 10
+HANG_IN_THERE_MINUTES = 5
 MATCH_RESPONSE_EXPIRATION_MINUTES = 2
 
 
@@ -28,6 +29,7 @@ class Matcher:
         )
 
         self.schedule_request_expiration(coffee_request.id)
+        self.schedule_remind_coffee_requester(coffee_request.id)
 
         return coffee_request
 
@@ -56,6 +58,7 @@ class Matcher:
         return match
 
     def find_match(self, coffee_request):
+        return "UMEGJJKSA"
         date = timezone.localdate()
         # time start/end are stored in EST
         time = timezone.localtime(timezone=pytz.timezone("US/Eastern")).time()
@@ -103,21 +106,6 @@ class Matcher:
         member = random.choice(members)
         return member.user_id
 
-        while len(members):
-            member = random.choice(members)
-            is_bot = self.client.is_bot(user=member)
-            previous_match = Match.objects.filter(
-                coffee_request=coffee_request, user_id=member
-            ).exists()
-
-            if is_bot or previous_match:
-                members.remove(member)
-                continue
-
-            return member
-
-        return None
-
     def accept_request(self, user_id, block_id, response_url):
         match = Match.objects.get(user_id=user_id, block_id=block_id)
 
@@ -152,6 +140,13 @@ class Matcher:
         expiration = timezone.now() + timedelta(minutes=REQUEST_EXPIRATION_MINUTES)
         # schedule a task with ETA of expiration time that cancels a pending match if it hasn't been accepted
         expire_a_request_if_needed.apply_async(args=[coffee_request_id], eta=expiration)
+
+    def schedule_remind_coffee_requester(self, coffee_request_id):
+        from .tasks import remind_coffee_requester
+
+        expiration = timezone.now() + timedelta(minutes=HANG_IN_THERE_MINUTES)
+        # schedule a task with ETA of expiration time that sends the requester to hold tight
+        remind_coffee_requester.apply_async(args=[coffee_request_id], eta=expiration)
 
     def send_no_matches_message_to_requesting_user(self, user_id):
         return self.client.post_to_private(
