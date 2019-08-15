@@ -4,6 +4,9 @@ from ..models import CoffeeRequest
 
 class CreateCoffeeRequest(Action):
     def execute(self, *, user_id: str, response_url: str):
+        if not self.client.assert_channel_member(user_id):
+            return
+
         if CoffeeRequest.objects.filter(
             user_id=user_id, status=CoffeeRequest.STATUS_PENDING
         ).exists():

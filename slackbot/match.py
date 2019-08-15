@@ -40,8 +40,7 @@ class Matcher:
 
     def find_match(self, coffee_request):
         members = self.client.get_channel_participants()
-        if coffee_request.user_id in members:
-            members.remove(coffee_request.user_id)
+        members.remove(coffee_request.user_id)
 
         while len(members):
             member = random.choice(members)

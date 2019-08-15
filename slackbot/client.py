@@ -20,6 +20,26 @@ class Client:
         self._client = WebClient(token=token)
         self.channel = channel
 
+    def assert_channel_member(self, user_id) -> bool:
+        if user_id in self.get_channel_participants():
+            return True
+
+        conversation = self._client.conversations_info(channel=self.channel)
+        channel = conversation.data["channel"]["name"]
+        self.post_to_private(
+            receiver_id=user_id,
+            blocks=[
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": f"Join #{channel} to start meeting some :coffee: buddies!",
+                    },
+                }
+            ],
+        )
+        return False
+
     def get_channel_participants(self) -> List[str]:
         response = self._client.conversations_members(channel=self.channel)
         return response.data["members"]
