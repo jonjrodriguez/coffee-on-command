@@ -38,6 +38,27 @@ class AcceptCoffeeRequest(Action):
         self.client.post_to_private(
             matched_user, text=f"<@{requested_user}> is your buddy!"
         )
+
+        self.client.update(
+            channel=match.coffee_request.initial_message.channel,
+            ts=match.coffee_request.initial_message.ts,
+            color=True,
+            blocks=[
+                {
+                    "type": "section",
+                    "text": {
+                        "type": "mrkdwn",
+                        "text": "I'm searching for your coffee buddy. :coffee: Let me know if you change your mind. :wink:",
+                    },
+                },
+                {
+                    "type": "context",
+                    "elements": [
+                        {"type": "mrkdwn", "text": "Woo hoo! Go get your brew!"}
+                    ],
+                },
+            ],
+        )
         self.client.post_to_private(
             requested_user, text=f"<@{matched_user}> is your buddy!"
         )
