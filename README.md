@@ -2,7 +2,12 @@
 
 ## Setup App
 
-(Assumes pyenv and postgres are already setup)
+Requirements:
+
+- pyenv
+- postgres
+- redis
+- ngrok
 
 Create and enter a virtualenv
 
@@ -26,7 +31,6 @@ createdb coffee_on_command
 createuser --superuser --createdb --createrole --login --encrypted coffee_on_command
 ./manage.py migrate
 ./manage.py loaddata recommendations
-./manage.py createsuperuser
 ```
 
 Setup Local Settings
@@ -37,9 +41,9 @@ Setup Local Settings
 ## Run App
 
 ```bash
-brew cask install ngrok
 ./manage.py runserver
 ngrok http 8000
+celery worker --loglevel=info -A app
 ```
 
 Save your `ngrok` address from above. You'll need it when configuring a Slackbot.
@@ -53,26 +57,10 @@ You can also view and replay your incoming requests at http://127.0.0.1:4040.
 2. Enable Interactive Components
    - Request URL: `ngrok` url + "/response"
 3. Enable slash commands
-   - Request URL: `ngrok` url
+   - Request URL: `ngrok` url + "/command"
    - Command: something unique
 4. Create a bot user
 5. Enable events
    - Request URL: `ngrok` url + "/event"
    - Add Bot events: `member_joined_channel`, `member_left_channel`
 6. Finally go to `Install App` -> `Reinstall App`
-
-## Celery Setup
-
-If you want to run it async, you should install redis and start redis
-
-```
-redis-server
-```
-
-Start celery worker
-
-```
-celery worker --loglevel=info -A app
-```
-
-If you want to run it synchronously, you can set `CELERY_TASK_ALWAYS_EAGER=True` in `local_settings.py`

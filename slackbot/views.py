@@ -3,6 +3,7 @@ from hashlib import sha256
 import hmac
 import json
 
+from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -20,7 +21,11 @@ from .tasks import (
 )
 
 
-class BaseView(APIView):
+class IndexView(TemplateView):
+    template_name = "index.html"
+
+
+class SlackView(APIView):
     def check_permissions(self, request):
         super().check_permissions(request)
 
@@ -39,7 +44,7 @@ class BaseView(APIView):
             self.permission_denied(request, message="Unverified request")
 
 
-class IndexView(BaseView):
+class CommandView(SlackView):
     def post(self, request):
         user_id = request.POST.get("user_id")
         response_url = request.POST.get("response_url")
@@ -49,7 +54,7 @@ class IndexView(BaseView):
         return Response()
 
 
-class ResponseView(BaseView):
+class ResponseView(SlackView):
     def post(self, request):
         data = json.loads(request.data.get("payload"))
         payload = Payload(data=data)
@@ -89,7 +94,7 @@ class ResponseView(BaseView):
         return Response()
 
 
-class EventsView(BaseView):
+class EventsView(SlackView):
     def post(self, request):
         challenge = request.data.get("challenge")
         if challenge:

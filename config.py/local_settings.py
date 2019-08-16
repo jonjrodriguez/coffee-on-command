@@ -23,7 +23,6 @@ DATABASES = {
 # Celery
 
 CELERY_BROKER_URL = "redis://localhost"
-CELERY_TASK_ALWAYS_EAGER = False
 
 # Integrations
 
