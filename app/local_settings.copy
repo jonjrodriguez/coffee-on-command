@@ -1,5 +1,0 @@
-SLACK = {
-    "BOT_TOKEN": "",
-    "CHANNEL": "",
-    "SIGNING_SECRET": "",
-}

@@ -20,13 +20,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = ")wz&ls+d6v-g_tx1e#o0@sn@y@sad&zyvn_v7m3!i80*@s+a-k"
+SECRET_KEY = ""
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = [".ngrok.io"]
-
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -74,12 +73,11 @@ WSGI_APPLICATION = "app.wsgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "coffee_on_command",
-        "USER": "coffee_on_command",
+        "NAME": "",
+        "USER": "",
         "PASSWORD": "",
         "HOST": "localhost",
         "PORT": "5432",
@@ -113,15 +111,18 @@ USE_L10N = True
 
 USE_TZ = True
 
-CELERY_BROKER_URL = "redis://localhost"
-CELERY_TASK_ALWAYS_EAGER = False
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = "/static/"
 
-# Slack settings
+# Celery
+
+CELERY_BROKER_URL = "redis://localhost"
+CELERY_TASK_ALWAYS_EAGER = False
+
+# Integrations
+
 SLACK = {"BOT_TOKEN": "", "CHANNEL": "", "SIGNING_SECRET": ""}
 
 try:

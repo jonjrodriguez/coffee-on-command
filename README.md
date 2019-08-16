@@ -31,7 +31,8 @@ createuser --superuser --createdb --createrole --login --encrypted coffee_on_com
 
 Setup Local Settings
 
-1. Copy `local_settings.copy` -> `local_settings.py` and update the values
+1. `cp config/local_settings.py app/local_settings.py`
+2. Update relevant values
 
 ## Run App
 
