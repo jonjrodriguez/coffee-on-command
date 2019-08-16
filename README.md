@@ -4,6 +4,7 @@
 
 Requirements:
 
+- python 3.7
 - pyenv
 - postgres
 - redis
@@ -27,8 +28,8 @@ pip install -r requirements.txt
 Setup Local DB
 
 ```bash
-createdb coffee_on_command
-createuser --superuser --createdb --createrole --login --encrypted coffee_on_command
+createdb <db_name>
+createuser --superuser --createdb --createrole --login --encrypted <username>
 ./manage.py migrate
 ./manage.py loaddata recommendations
 ```
@@ -36,7 +37,7 @@ createuser --superuser --createdb --createrole --login --encrypted coffee_on_com
 Setup Local Settings
 
 1. `cp config/local_settings.py app/local_settings.py`
-2. Update relevant values
+2. Update relevant values (ie. `db_name` and `username` from above)
 
 ## Run App
 
@@ -55,12 +56,12 @@ You can also view and replay your incoming requests at http://127.0.0.1:4040.
    - Enter App Name
    - Choose development workspace
 2. Enable Interactive Components
-   - Request URL: `ngrok` url + "/response"
+   - Request URL: `ngrok_url/response`
 3. Enable slash commands
-   - Request URL: `ngrok` url + "/command"
+   - Request URL: `ngrok_url/command`
    - Command: something unique
 4. Create a bot user
 5. Enable events
-   - Request URL: `ngrok` url + "/event"
+   - Request URL: `ngrok_url/event`
    - Add Bot events: `member_joined_channel`, `member_left_channel`
 6. Finally go to `Install App` -> `Reinstall App`
