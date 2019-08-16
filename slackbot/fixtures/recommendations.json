@@ -1,0 +1,83 @@
+[
+  {
+    "model": "slackbot.recommendation",
+    "pk": 1,
+    "fields": {
+      "name": "Gasoline Alley",
+      "link": "https://goo.gl/maps/M93HjGqrtreaV3om7",
+      "specialty": "Iced Americano"
+    }
+  },
+  {
+    "model": "slackbot.recommendation",
+    "pk": 2,
+    "fields": {
+      "name": "La Colombe",
+      "link": "https://goo.gl/maps/yxnjUorEvxrzcKhb9",
+      "specialty": "Black and Tan"
+    }
+  },
+  {
+    "model": "slackbot.recommendation",
+    "pk": 3,
+    "fields": {
+      "name": "Maman",
+      "link": "https://goo.gl/maps/vj1mjmbxqV1TXZSr6",
+      "specialty": "Maman's 'Famous' Nutty Chocolate Chunk Cookie"
+    }
+  },
+  {
+    "model": "slackbot.recommendation",
+    "pk": 4,
+    "fields": {
+      "name": "Happy Bones",
+      "link": "https://goo.gl/maps/aGH65UrSV8g7Cgxw5",
+      "specialty": "Cappuccino"
+    }
+  },
+  {
+    "model": "slackbot.recommendation",
+    "pk": 5,
+    "fields": {
+      "name": "Bluestone Lane",
+      "link": "https://g.page/Bluestone-Lane-Spring-St-Nolita?share",
+      "specialty": "Avo Smash"
+    }
+  },
+  {
+    "model": "slackbot.recommendation",
+    "pk": 6,
+    "fields": {
+      "name": "Blue Bottle Coffee",
+      "link": "https://g.page/Bluestone-Lane-Spring-St-Nolita?share",
+      "specialty": "Flat White"
+    }
+  },
+  {
+    "model": "slackbot.recommendation",
+    "pk": 7,
+    "fields": {
+      "name": "Lafayette",
+      "link": "https://goo.gl/maps/K9Eqchu8i7icHm5y9",
+      "specialty": "Macarons"
+    }
+  },
+  {
+    "model": "slackbot.recommendation",
+    "pk": 8,
+    "fields": {
+      "name": "Caf\u00e9 Grumpy",
+      "link": "https://goo.gl/maps/VTVQqU3daj5xyhFp8",
+      "specialty": "Cold Brew"
+    }
+  },
+  {
+    "model": "slackbot.recommendation",
+    "pk": 9,
+    "fields": {
+      "name": "Cha Cha Matcha",
+      "link": "https://goo.gl/maps/RkUtBXdsKXBEsmac7",
+      "specialty": "Matcha, of course!"
+    }
+  }
+]

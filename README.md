@@ -25,6 +25,7 @@ Setup Local DB
 createdb coffee_on_command
 createuser --superuser --createdb --createrole --login --encrypted coffee_on_command
 ./manage.py migrate
+./manage.py loaddata recommendations
 ./manage.py createsuperuser
 ```
 
