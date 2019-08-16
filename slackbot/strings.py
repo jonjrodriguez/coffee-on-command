@@ -8,9 +8,8 @@ MAYBE_NEXT_TIME = "Oh snap! Maybe next time. :shrug:"
 NO_MATCHES_FOUND = "No matches found!"
 NO_REPLY = "Nah..."
 RAN_OUT_OF_TIME = "Looks like you ran out of time. :disappointed: If you want me to find you another buddy, let me know!"
-REQUEST_CANCELED = "Sorry, the person cancelled their request."
 
 JOINING_MESSAGE = "Hey there! :wave: Thanks for joining! Let's get some things nailed down:"
 SET_PREFERENCES = ":coffee: Set Coffee Preferences"
-PREFERENCES_RECEIVED = "Thanks. Your preferences are all set! Have a hot one on us! :coffee:"
+PREFERENCES_RECEIVED = "Your preferences are all set! Use */coffee* to find your first buddy. :coffee:"
 

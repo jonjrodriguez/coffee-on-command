@@ -5,7 +5,7 @@
     "fields": {
       "name": "Gasoline Alley",
       "link": "https://goo.gl/maps/M93HjGqrtreaV3om7",
-      "specialty": "Iced Americano"
+      "specialty": "an Iced Americano"
     }
   },
   {
@@ -14,7 +14,7 @@
     "fields": {
       "name": "La Colombe",
       "link": "https://goo.gl/maps/yxnjUorEvxrzcKhb9",
-      "specialty": "Black and Tan"
+      "specialty": "a Black and Tan"
     }
   },
   {
@@ -32,7 +32,7 @@
     "fields": {
       "name": "Happy Bones",
       "link": "https://goo.gl/maps/aGH65UrSV8g7Cgxw5",
-      "specialty": "Cappuccino"
+      "specialty": "a Cappuccino"
     }
   },
   {
@@ -41,7 +41,7 @@
     "fields": {
       "name": "Bluestone Lane",
       "link": "https://g.page/Bluestone-Lane-Spring-St-Nolita?share",
-      "specialty": "Avo Smash"
+      "specialty": "an Avo Smash"
     }
   },
   {
@@ -50,7 +50,7 @@
     "fields": {
       "name": "Blue Bottle Coffee",
       "link": "https://g.page/Bluestone-Lane-Spring-St-Nolita?share",
-      "specialty": "Flat White"
+      "specialty": "a Flat White"
     }
   },
   {
@@ -68,7 +68,7 @@
     "fields": {
       "name": "Caf\u00e9 Grumpy",
       "link": "https://goo.gl/maps/VTVQqU3daj5xyhFp8",
-      "specialty": "Cold Brew"
+      "specialty": "a Cold Brew"
     }
   },
   {
@@ -77,7 +77,7 @@
     "fields": {
       "name": "Cha Cha Matcha",
       "link": "https://goo.gl/maps/RkUtBXdsKXBEsmac7",
-      "specialty": "Matcha, of course!"
+      "specialty": "a Matcha, of course!"
     }
   }
 ]

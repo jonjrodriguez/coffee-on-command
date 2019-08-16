@@ -1,4 +1,4 @@
-from slackbot.strings import SEARCHING_FOR_COFFEE_BUDDY, COFFEE_REQUEST, REQUEST_CANCELED, MAYBE_NEXT_TIME
+from slackbot.strings import SEARCHING_FOR_COFFEE_BUDDY, COFFEE_REQUEST, RAN_OUT_OF_TIME, MAYBE_NEXT_TIME
 from .base import Action
 from ..models import CoffeeRequest
 
@@ -59,7 +59,7 @@ class CancelCoffeeRequest(Action):
                         "elements": [
                             {
                                 "type": "mrkdwn",
-                                "text": REQUEST_CANCELED,
+                                "text": RAN_OUT_OF_TIME,
                             }
                         ],
                     },
