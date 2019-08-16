@@ -45,24 +45,10 @@ class CancelCoffeeRequest(Action):
             self.client.update(
                 channel=match.initial_message.channel,
                 ts=match.initial_message.ts,
-                color=True,
-                blocks=[
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": COFFEE_REQUEST,
-                        },
-                    },
-                    {
-                        "type": "context",
-                        "elements": [
-                            {
-                                "type": "mrkdwn",
-                                "text": RAN_OUT_OF_TIME,
-                            }
-                        ],
-                    },
-                ],
+                text=COFFEE_REQUEST,
+            )
+            self.client.post_to_private(
+                match.user_id,
+                text=RAN_OUT_OF_TIME,
             )
 

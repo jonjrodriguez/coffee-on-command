@@ -43,15 +43,9 @@ class AcceptCoffeeRequest(Action):
         self.client.update(
             channel=match.coffee_request.initial_message.channel,
             ts=match.coffee_request.initial_message.ts,
+            text=SEARCHING_FOR_COFFEE_BUDDY,
             color=True,
             blocks=[
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": SEARCHING_FOR_COFFEE_BUDDY,
-                    },
-                },
                 {
                     "type": "context",
                     "elements": [

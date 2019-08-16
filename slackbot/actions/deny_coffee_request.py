@@ -27,15 +27,9 @@ class DenyCoffeeRequest(Action):
             self.client.update(
                 channel=coffee_request.initial_message.channel,
                 ts=coffee_request.initial_message.ts,
+                text=SEARCHING_FOR_COFFEE_BUDDY,
                 color=True,
                 blocks=[
-                    {
-                        "type": "section",
-                        "text": {
-                            "type": "mrkdwn",
-                            "text": SEARCHING_FOR_COFFEE_BUDDY,
-                        },
-                    },
                     {
                         "type": "context",
                         "elements": [{"type": "mrkdwn", "text": NO_MATCHES_FOUND}],

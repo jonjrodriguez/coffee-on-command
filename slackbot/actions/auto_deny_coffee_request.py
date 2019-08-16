@@ -9,20 +9,7 @@ class AutoDenyCoffeeRequest(Action):
         self.client.update(
             channel=channel,
             ts=ts,
-            color=True,
-            blocks=[
-                {
-                    "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": COFFEE_REQUEST,
-                    },
-                },
-                {
-                    "type": "context",
-                    "elements": [{"type": "mrkdwn", "text": "Too slow!"}],
-                },
-            ],
+            text=COFFEE_REQUEST,
         )
         self.client.post_to_private(
             denied_match.user_id,
