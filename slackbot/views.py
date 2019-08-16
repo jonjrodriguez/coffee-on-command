@@ -3,11 +3,11 @@ from hashlib import sha256
 import hmac
 import json
 
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, RedirectView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from app.settings import SLACK
+from app.settings import SLACK, LANDING_PAGE_REDIRECT
 
 from .serializers import Payload
 from .tasks import (
@@ -21,8 +21,9 @@ from .tasks import (
 )
 
 
-class IndexView(TemplateView):
-    template_name = "index.html"
+class IndexView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs) -> None:
+        return LANDING_PAGE_REDIRECT
 
 
 class SlackView(APIView):

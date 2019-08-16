@@ -27,3 +27,6 @@ CELERY_BROKER_URL = "redis://localhost"
 # Integrations
 
 SLACK = {"BOT_TOKEN": "", "CHANNEL": "", "SIGNING_SECRET": ""}
+
+# Demo
+LANDING_PAGE_REDIRECT = ""
