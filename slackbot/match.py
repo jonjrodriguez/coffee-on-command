@@ -80,16 +80,20 @@ class Matcher:
             coffee_request=coffee_request, user_id=OuterRef("user_id")
         )
 
-        members = (
+        pending_request = CoffeeRequest.objects.filter(user_id=OuterRef("user_id"), status=CoffeeRequest.STATUS_PENDING)
+
+        member = (
             Member.objects.annotate(
                 coffees_drank=Coalesce(
                     Subquery(coffees_drank, output_field=IntegerField()), 0
                 ),
                 pending_match=Exists(pending_match),
+                pending_request=Exists(pending_request),
                 previously_matched=Exists(previously_matched),
             ).filter(
                 is_bot=False,
                 pending_match=False,
+                pending_request=False,
                 previously_matched=False,
                 coffees_drank__lt=F("coffee_count"),
                 start_time__lte=time,
@@ -97,12 +101,12 @@ class Matcher:
                 status=Member.STATUS_ACTIVE,
             )
             .exclude(user_id=coffee_request.user_id)
+            .order_by("?")
+            .first()
         )
 
-        if not members:
+        if not member:
             return None
-
-        member = random.choice(members)
         return member.user_id
 
     def accept_request(self, user_id, block_id, response_url):
