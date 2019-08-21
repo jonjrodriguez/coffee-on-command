@@ -13,7 +13,7 @@ from .models import CoffeeRequest, Match, SlackMessage, Member
 
 REQUEST_EXPIRATION_MINUTES = 10
 HANG_IN_THERE_MINUTES = 5
-MATCH_RESPONSE_EXPIRATION_MINUTES = 2
+MATCH_RESPONSE_EXPIRATION_MINUTES = 1
 
 
 def get_matcher(*, client):
@@ -80,7 +80,9 @@ class Matcher:
             coffee_request=coffee_request, user_id=OuterRef("user_id")
         )
 
-        pending_request = CoffeeRequest.objects.filter(user_id=OuterRef("user_id"), status=CoffeeRequest.STATUS_PENDING)
+        pending_request = CoffeeRequest.objects.filter(
+            user_id=OuterRef("user_id"), status=CoffeeRequest.STATUS_PENDING
+        )
 
         member = (
             Member.objects.annotate(
@@ -90,7 +92,8 @@ class Matcher:
                 pending_match=Exists(pending_match),
                 pending_request=Exists(pending_request),
                 previously_matched=Exists(previously_matched),
-            ).filter(
+            )
+            .filter(
                 is_bot=False,
                 pending_match=False,
                 pending_request=False,
@@ -157,10 +160,7 @@ class Matcher:
             blocks=[
                 {
                     "type": "section",
-                    "text": {
-                        "type": "mrkdwn",
-                        "text": COULD_NOT_FIND_MATCH,
-                    },
+                    "text": {"type": "mrkdwn", "text": COULD_NOT_FIND_MATCH},
                 }
             ],
         )
