@@ -1,6 +1,6 @@
 black==19.3b0
 celery==4.3.0
-django==2.2.4
+django==2.2.8
 djangorestframework==3.10.2
 psycopg2-binary==2.8.3
 pylint==2.3.1
