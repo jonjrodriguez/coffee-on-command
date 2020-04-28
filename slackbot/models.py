@@ -32,6 +32,10 @@ class CoffeeRequest(models.Model):
         (STATUS_CANCELLED, _("Cancelled")),
     )
 
+    COMMAND_COFFEE = "/coffee"
+    COMMAND_MOCHA = "/mocha"
+    COMMAND_CHOICES = ((COMMAND_COFFEE, _("Coffee")), (COMMAND_MOCHA, _("Mocha")))
+
     user_id = models.CharField(max_length=255)
     response_url = models.CharField(max_length=255)
     created = models.DateTimeField(default=now)
@@ -45,6 +49,12 @@ class CoffeeRequest(models.Model):
         null=True,
         related_name="coffee_request",
     )
+    command = models.CharField(
+        max_length=255, choices=COMMAND_CHOICES, default=COMMAND_COFFEE
+    )
+
+    def is_coffee_request(self):
+        return self.command == "/coffee"
 
 
 class Match(models.Model):
@@ -76,4 +86,3 @@ class Recommendation(models.Model):
     name = models.CharField(max_length=255)
     link = models.CharField(max_length=255)
     specialty = models.CharField(max_length=255)
-

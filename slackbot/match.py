@@ -24,9 +24,9 @@ class Matcher:
     def __init__(self, client: Client):
         self.client = client
 
-    def create_request(self, user_id, response_url):
+    def create_request(self, user_id, response_url, command):
         coffee_request = CoffeeRequest.objects.create(
-            user_id=user_id, response_url=response_url
+            user_id=user_id, response_url=response_url, command=command
         )
 
         self.schedule_request_expiration(coffee_request.id)
@@ -53,7 +53,9 @@ class Matcher:
             user_id=member, coffee_request=coffee_request, expiration=expiration
         )
 
-        self.send_invite_message_to_potential_match_user(match)
+        self.send_invite_message_to_potential_match_user(
+            match, coffee_request.is_coffee_request()
+        )
         self.schedule_match_expiration(match.id, expiration)
 
         return match
@@ -165,9 +167,11 @@ class Matcher:
             ],
         )
 
-    def send_invite_message_to_potential_match_user(self, match):
+    def send_invite_message_to_potential_match_user(self, match, is_coffee_request):
         response = self.client.send_invite(
-            receiver_id=match.user_id, block_id=match.block_id
+            receiver_id=match.user_id,
+            block_id=match.block_id,
+            is_coffee_request=is_coffee_request,
         )
 
         # Save the postMessage ts so we can update the message later

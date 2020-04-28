@@ -4,7 +4,7 @@ from requests import post
 from slack import WebClient
 
 from app.settings import SLACK
-from slackbot.strings import COFFEE_REQUEST
+from slackbot.strings import COFFEE_REQUEST, CONNECT_REQUEST
 
 from .models import Member
 
@@ -74,7 +74,9 @@ class Client:
         response_user = response.data["user"]
         return response_user["is_bot"]
 
-    def send_invite(self, receiver_id: str, block_id: str) -> dict:
+    def send_invite(
+        self, receiver_id: str, block_id: str, is_coffee_request: bool
+    ) -> dict:
         channel_id = (
             self._client.conversations_open(users=receiver_id)
             .data.get("channel")
@@ -85,7 +87,7 @@ class Client:
                 "type": "section",
                 "text": {
                     "type": "mrkdwn",
-                    "text": COFFEE_REQUEST,
+                    "text": COFFEE_REQUEST if is_coffee_request else CONNECT_REQUEST,
                 },
             },
             {

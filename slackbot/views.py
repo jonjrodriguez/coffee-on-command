@@ -17,7 +17,7 @@ from .tasks import (
     process_deny,
     process_event_webhook,
     process_request_preferences,
-    process_store_preferences
+    process_store_preferences,
 )
 
 
@@ -49,8 +49,11 @@ class CommandView(SlackView):
     def post(self, request):
         user_id = request.POST.get("user_id")
         response_url = request.POST.get("response_url")
+        command = request.POST.get("command")
 
-        process_create.delay(user_id=user_id, response_url=response_url)
+        process_create.delay(
+            user_id=user_id, response_url=response_url, command=command
+        )
 
         return Response()
 
@@ -84,12 +87,18 @@ class ResponseView(SlackView):
             elif action.get("value") == "PREFERENCES":
                 trigger_id = payload.data.get("trigger_id")
                 process_request_preferences.delay(
-                    user_id=user_id, block_id=block_id, response_url=response_url, trigger_id=trigger_id
+                    user_id=user_id,
+                    block_id=block_id,
+                    response_url=response_url,
+                    trigger_id=trigger_id,
                 )
         if submission:
             callback_id = payload.data.get("callback_id")
             process_store_preferences.delay(
-                user_id=user_id, callback_id=callback_id, data=submission, response_url=response_url
+                user_id=user_id,
+                callback_id=callback_id,
+                data=submission,
+                response_url=response_url,
             )
 
         return Response()

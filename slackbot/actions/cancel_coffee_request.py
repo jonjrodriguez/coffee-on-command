@@ -1,4 +1,11 @@
-from slackbot.strings import SEARCHING_FOR_COFFEE_BUDDY, COFFEE_REQUEST, RAN_OUT_OF_TIME, MAYBE_NEXT_TIME
+from slackbot.strings import (
+    SEARCHING_FOR_COFFEE_BUDDY,
+    COFFEE_REQUEST,
+    CONNECT_REQUEST,
+    RAN_OUT_OF_TIME,
+    MAYBE_NEXT_TIME,
+    SEARCHING_FOR_CONNECT_BUDDY,
+)
 from .base import Action
 from ..models import CoffeeRequest
 
@@ -25,18 +32,18 @@ class CancelCoffeeRequest(Action):
             response_url=response_url,
             replace=True,
             color=True,
-            text=SEARCHING_FOR_COFFEE_BUDDY,
+            text=SEARCHING_FOR_COFFEE_BUDDY
+            if coffee_request.is_coffee_request()
+            else SEARCHING_FOR_CONNECT_BUDDY,
             blocks=[
                 {
                     "type": "context",
                     "elements": [{"type": "mrkdwn", "text": cancel_text}],
-                },
+                }
             ],
         )
 
-        self.client.post_to_private(
-            receiver_id=user_id, text=MAYBE_NEXT_TIME
-        )
+        self.client.post_to_private(receiver_id=user_id, text=MAYBE_NEXT_TIME)
 
         for match in coffee_request.matches.filter(is_accepted=None):
             match.is_accepted = False
@@ -45,10 +52,8 @@ class CancelCoffeeRequest(Action):
             self.client.update(
                 channel=match.initial_message.channel,
                 ts=match.initial_message.ts,
-                text=COFFEE_REQUEST,
+                text=COFFEE_REQUEST
+                if coffee_request.is_coffee_request()
+                else CONNECT_REQUEST,
             )
-            self.client.post_to_private(
-                match.user_id,
-                text=RAN_OUT_OF_TIME,
-            )
-
+            self.client.post_to_private(match.user_id, text=RAN_OUT_OF_TIME)
